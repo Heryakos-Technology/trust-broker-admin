@@ -143,7 +143,12 @@ onMounted(() => {
       <div
         class="md:flex fixed flex-col pt-24 px-4 bg-darkBlue h-screen w-[300px] z-50 top-0 left-0 text-white hidden bg-blue-950"
       >
-        <Logo class="w-[180px] fill-white" />
+        <!-- <Logo class="w-[180px] fill-white" /> -->
+         <div class="flex">
+
+           <img src="/blokerlogo.png" alt="" class="w-1/3">
+           <p class="text-lg font-semibold ml-3">TrustBroker Admin</p>
+         </div>
         <div class="px-8 mt-16">
           <ul class="text-2xl space-y-10">
             <li
@@ -163,7 +168,7 @@ onMounted(() => {
               Menu
             </li>
             <RouterLink
-              :to="{ name: 'Home' }"
+              :to="{ name: 'BrokerDashbord' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
             >
               <div class="bg-lightBlue p-1 rounded-full">
@@ -180,8 +185,31 @@ onMounted(() => {
                     d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                   />
                 </svg>
+               
               </div>
               Profile
+            </RouterLink>
+            <RouterLink
+              :to="{ name: 'BrokerDashbord' }"
+              class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
+            >
+              <div class="bg-lightBlue p-1 rounded-full">
+                <!-- <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  strokeWidth="{1.5}"
+                  stroke="currentColor"
+                  class="size-6 fill-white"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                  />
+                </svg> -->
+                <img src="/Broker.png" alt="">
+              </div>
+              Brokers
             </RouterLink>
             <li
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
@@ -195,7 +223,7 @@ onMounted(() => {
               :to="{ name: 'Home' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
             >
-              <img :src="RatingIcon" alt="" class="size-6" />Companies
+              <img src="/person.png" alt="" class="size-6" />Customer
             </RouterLink>
             <RouterLink
               :to="{ name: 'Home' }"
@@ -203,18 +231,18 @@ onMounted(() => {
             >
               <img :src="userIcons" alt="" class="size-6" />Users
             </RouterLink>
-            <RouterLink
+            <!-- <RouterLink
               :to="{ name: 'Home' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
             >
               <img :src="CompaniesIcon" alt="" class="size-6" />Categories
-            </RouterLink>
-            <RouterLink
+            </RouterLink> -->
+            <!-- <RouterLink
               :to="{ name: 'Home' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
             >
               <img :src="CompaniesIcon" alt="" class="size-6" />Rating
-            </RouterLink>
+            </RouterLink> -->
           </ul>
 
           <!-- Logout button in sidebar -->

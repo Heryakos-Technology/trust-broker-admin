@@ -3,27 +3,8 @@
       <!--large screen-->
       <div class="pb-10 px-5">
         <h1 class="mb-3 text-gray-500">Featured Brokers</h1>
-        <div class="w-4/5 mx-auto ml-130 mb-2" v-if="showDetails">
-          <div class="bg-white rounded-sm h-10 w-1/4 mx-auto text-center py-2  text-sm font-semibold">
-          Portfolio
-          </div>
-          <div class="bg-white mt-4 rounded-sm h-10 w-1/4 mx-auto text-center py-2 text-sm font-semibold">
-          Delivery
-          </div>
-          <div class="bg-white mt-4 rounded-sm h-10 w-1/4 mx-auto text-center py-2 text-sm font-semibold">
-          Deals
-          </div>
-          <div class="bg-white mt-4 rounded-sm h-10 w-1/4 mx-auto text-center py-2 text-sm font-semibold">
-          Review
-          </div>
-          <div class="bg-white mt-4 rounded-sm h-10 w-1/4 mx-auto text-center py-2 text-sm font-semibold">
-          Sales
-          </div>
-          <div class="bg-white mt-4 rounded-sm h-10 w-1/4 mx-auto text-center py-2 text-sm font-semibold">
-          Skills
-          </div>
-         
-        </div>
+     
+
         <div
     
           class="flex justify-center items-center mb-3"
@@ -31,6 +12,14 @@
         >
           <div class="loader"></div>
         </div> 
+        <div
+    
+    class="flex justify-center items-center mb-3"
+    v-if="loadingbrokers2"
+  >
+    <div class="loader"></div>
+  </div>
+        
         <!-- <div
           class="flex justify-center items-center mb-3 "
           v-if="loadingbrokers2"
@@ -38,163 +27,208 @@
           <div class="loader"></div>
         </div> -->
         <hr class="text-gray-300 -mx-9" />
-        <div
-          v-if="singleampany"
-          class="shadow-md w-1/3 ml-165 mt-5 text-xs bg-white mb-3 pb-6 rounded-md"
-        >
-          <!-- <div v-if="images.length > 0">
-              <img :src="images[0]" alt="campany Image" class="campany-image" />
-          </div> -->
-          <!-- <img
-            :src="getImageUrl(singleampany.images)"
-            alt="No Image For This Campany"
-            class="rounded-[10px] w-11/11 h-60"
-          /> -->
-          <div class="flex px-3 mt-10">
-            <div class="flex mr-7">
-              <div>
-                <img src="/campantIcon.png" alt="" class="w-2/3" />
-              </div>
-              <div>{{ singleampany.name }}</div>
-            </div>
-            <div class="flex">
-              <div>
-                <img src="/profileicon.png" alt="" class="w-2/3" />
-              </div>
-              <div>{{ singleampany.owner_name }}</div>
-            </div>
-          </div>
-          <div class="flex mt-3 px-3">
-            <div>
-              <img src="/textIcon.png" alt="" class="mt-2" />
-            </div>
-            <div class="ml-2">
-              <div>
-                {{ singleampany.description }}
-                <span v-if="!singleampany.showFullDescription">
-                  {{ singleampany.description.slice(0, 50) }}...
-                  <a
-                    href="#"
-                    @click.prevent="toggleDescription(singleampany)"
-                    class="text-blue-400 underline"
-                    >Show more</a
-                  >
-                </span>
-                <span v-else>
-                  {{ singleampany.description }}
-                  <a
-                    href="#"
-                    @click.prevent="toggleDescription(singleampany)"
-                    class="text-blue-400 underline"
-                    >Show less</a
-                  >
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="flex mt-3 px-3">
-            <div>
-              <img src="/locationicon.png" alt="" class="w-2/3" />
-            </div>
-            <div>{{ singleampany.address }}</div>
-          </div>
-          <div class="flex mt-3 px-3">
-            <div>
-              <img src="/phoneicon.png" alt="" class="w-2/3" />
-            </div>
-            <div>{{ singleampany.contact_phone }}</div>
-          </div>
-          <div class="flex mt-3 px-3">
-            <div>
-              <img src="/messageicon.png" alt="" class="" />
-            </div>
-            <div class="ml-1">{{ singleampany.contact_email }}</div>
-          </div>
-          <div class="flex mt-3 px-3">
-            <div>
-              <img src="/linkicon.png" alt="" class="w-2/3" />
-            </div>
-            <div class="">
-              <div class="max-w-xs">
-                <a
-                  :href="singleampany.website"
-                  class="text-blue-500 underline block truncate"
-                  target="_blank"
-                >
-                  {{ singleampany.website }}
-                </a>
-              </div>
-              <div class="max-w-xs overflow-hidden">
-                <a
-                  :href="singleampany.social_media_links"
-                  class="text-blue-500 underline block truncate"
-                  target="_blank"
-                >
-                  {{ singleampany.social_media_links }}
-                </a>
-              </div>
-              <div>
-                <a href="#" class="text-blue-500 underline">{{
-                  singleampany.license_url
-                }}</a>
-              </div>
-            </div>
-          </div>
-          <div class="flex mt-3 px-3">
-            <div>
-              <img src="/rattingicon.png" alt="" class="w-2/3" />
-            </div>
-            <div>{{ singleampany.rating_avg }}</div>
-          </div>
-          <div class="flex mt-3 px-3 justify-between w-4/5 mx-auto">
-            <!-- <button v-if="!loadingbrokers3[singleampany.id]" 
-    @click="singleampany?.status !== 'approved' && singleampany?.status !== 'rejected' ? approveCampany(singleampany.id) : null"
-    class="bg-[#E0F7FF] px-5 py-1 rounded-md text-black 
-           "
-    :class="{ 'opacity-50 cursor-not-allowed': singleampany?.status === 'approved' || singleampany?.status === 'rejected','hover:scale-130 transition-transform duration-300' : singleampany?.status !== 'approved' && singleampany?.status !== 'rejected','cursor-pointer' : singleampany?.status !== 'approved' && singleampany?.status !== 'rejected'}"
-    :disabled="singleampany?.status === 'approved' || singleampany?.status === 'rejected'"
-  >
-    Approve
-  </button> -->
-  <div
-          class="flex justify-center items-center mb-3"
-         v-if="loadingbrokers3[singleampany.id]"
-        >
-          <div class="loader2"></div>
+        <div class="flex justify-between w-10/10 ">
+<div v-if="showPortfolio">
+  <h1 class="mb-3 text-xl font-semibold">Portfolio</h1>
+  <div class="bg-white w-1/2  mb-3 shadow-sm pb-2">
+    <img src="/portfolioimage.png" alt="" >
+  <div class="flex w-1/2  mx-auto mt-5">
+<img src="/person.png" alt="">
+<h1 class="ml-4">Alice Johnson</h1>
+  </div>
+  <div class="flex w-11/11 px-1 mt-2 mb-2">
+<img src="/textIcon2.png" alt="" class="h-3 mt-1">
+<p class="ml-2 text-sm w-5/6">My investment philosophy centers around a disciplined  approach to risk management and strategic asset allocation</p>
+
+  </div>
+  <div class="">
+
+    <a href="" class="text-blue-300 underline ml-5 ">See more</a>
+  </div>
+  </div>
+
+</div>
+<div class=" ">
+  <div v-if="showDelivery">
+    <h1 class="mb-3 text-xl font-semibold ">Delivery</h1>
+  <div class="bg-white w-12/11  px-3 py-5 mb-3 shadow-sm">
+    <p class="mb-4 text-green-400 font-semibold text-right">{{ deliveries.deliveryStatus }}</p>
+    <div class="flex justify-between ">
+<div class="flex">
+  <div class="flex jus">
+    <img src="/person.png" alt="">
+    <p class="ml-3">{{singleBroker.user.fullName}}</p>
+  </div>
+  <div class="flex ml-4">
+    <img src="/Broker.png" alt="">
+    <p>Alice Johnson</p>
+  </div>
+
+</div>
+
+<div>
+
+</div>
+  </div>
+  <div class="flex w-1/2 mx-auto mt-3">
+  <img src="/location.png" alt="">
+  <p>{{deliveries.location}}</p>
+</div>
+  <div class="w-1/3 mx-auto">
+
+<!-- <button class="bg-[#E0F7FF] text-black px-2 py-1 rounded-md mt-5 w-10/10">Pending</button> -->
+</div>
+  </div>
+  </div>
+
+
+
+</div>
+
         </div>
-  <!-- <button  v-if="!loadingbrokers4[singleampany.id]"
-    @click="singleampany?.status !== 'approved' && singleampany?.status !== 'rejected' ? rejectCampany(singleampany.id) : null"
-    class="bg-[#FFCCCB] px-5 py-1 rounded-md text-black 
-           "
-    :class="{ 'opacity-50 cursor-not-allowed': singleampany?.status === 'approved' || singleampany?.status === 'rejected','hover:scale-130 transition-transform duration-300' : singleampany?.status !== 'approved' && singleampany?.status !== 'rejected','cursor-pointer' : singleampany?.status !== 'approved' && singleampany?.status !== 'rejected'}"
-    :disabled="singleampany?.status === 'approved' || singleampany?.status === 'rejected'"
-  >
-  Reject
-  </button> -->
-  <div
-          class="flex justify-center items-center mb-3"
-         v-if="loadingbrokers4[singleampany.id]"
-        >
-          <div class="loader2"></div>
+        <div class="flex justify-between w-10/11">
+
+
+
+          <div v-if="showDeal">
+          <h1 class="mb-3 text-xl font-semibold">Deal</h1>
+<div class="bg-white w-12/10  px-3 py-5 mb-3 shadow-sm">
+<div class="flex justify-between">
+  <div class="flex jus">
+    <img src="/person.png" alt="">
+    <p class="ml-3">{{singleBroker.user.fullName}}</p>
+  </div>
+  <div class="flex">
+    <img src="/Broker.png" alt="">
+    <p>Alice Johnson</p>
+  </div>
+</div>
+<div class="flex justify-between mt-4">
+  <div class="flex">
+    <img src="/cart.png" alt="">
+    <p>{{ deals.quantity }}</p>
+  </div>
+  <div class="flex">
+    <img src="/laptop.png" alt="">
+    <p>{{deals.productName}}</p>
+  </div>
+  <div class="flex">
+    <img src="/expres.png" alt="">
+    <p class="ml-2">{{deals.deliveryOption}}</p>
+  </div>
+</div>
+<div class="flex justify-between mt-4">
+  <div class="flex">
+    <img src="/color.png" alt="">
+    <p class="ml-2">{{deals.color}}</p>
+  </div>
+  <div class="flex">
+    <img src="/creditCard.png" alt="">
+    <p class="ml-3">{{ deals.paymentOption }}</p>
+  </div>
+  <div class="flex">
+    <img src="/Xps.png" alt="">
+    <p class="ml-3">{{ deals.productModel }}</p>
+  </div>
+</div>
+<div class="w-1/3 mx-auto">
+
+  <!-- <button class="bg-[#E0F7FF] text-black px-2 py-1 rounded-md mt-5 w-10/10">Pending</button> -->
+</div>
+</div>
         </div>
-            <!-- <div  @click="singleampany?.status !== 'approved' && singleampany?.status !== 'rejected' ? rejectCampany(singleampany.id) : null" 
-            :class="{ 'opacity-50 cursor-not-allowed': singleampany?.status === 'approved' || singleampany?.status === 'rejected','hover:scale-130' : singleampany?.status !== 'approved' && singleampany?.status !== 'rejected'  }">
-              <button  class="bg-[#FFCCCB] px-5 py-1 rounded-md text-black" 
-      :disabled="singleampany?.status === 'approved' || singleampany?.status === 'rejected'" 
-      @click.stop>Reject</button>
-            </div> -->
-          </div>
+
+
         </div>
-        <div></div>
+
+     
+    
+      
       </div>
       <p v-if="errors" class="text-red-400 text-xl text-center font-semibold">
         {{ errors }}
       </p>
       <div class="px-3">
-      
+        <div class="flex justify-between ">
+        
+                    <div v-if="showReview">
+    <h1 class="mb-3 text-xl font-semibold">Review</h1>
+    <div class="flex justify-between bg-white w-10/10  px-3 py-5 mb-3 shadow-sm">
+    <img src="/star.png" alt="">
+    <img src="/star.png" alt="">
+    <img src="/star.png" alt="">
+    <img src="/star.png" alt="">
+  </div>
+  </div>
+          <div v-if="showSkills">
+          <h1 class="mb-3 text-xl font-semibold">Skills</h1>
+          <div class="bg-white w-13/11  px-3 py-5 mb-3 shadow-sm">
+<div class="flex justify-between">
+<div>Communication Skill</div>
+<div>{{skills.communicationSkill}}</div>
+</div>
+<div class="flex justify-between">
+<div>Broking </div>
+<div>{{ skills.brokingSkill }}</div>
+</div>
+<div class="flex justify-between">
+<div>Work Done</div>
+<div>{{skills.workDone}}</div>
+</div>
+<div class="flex justify-between">
+<div>Work In Progress</div>
+<div>{{ skills.workInProgress }}</div>
+</div>
+          </div>
+        </div>
+        <div class="" v-if="showSales">
+          <h1 class="mb-3 text-xl font-semibold ">Sales</h1>
+<div class="bg-white w-13/11 flex px-3 py-5 mb-3 justify-between shadow-sm">
+<div class="flex">
+  <img src="/cart.png" alt="">
+  <p>5</p>
+</div>
+<div class="flex">
+  <img src="/color.png" alt="">
+  <p>Blue</p>
+</div>
+<div class="flex">
+  <img src="/laptop.png" alt="">
+  <p>Laptop</p>
+</div>
+</div>
+        </div>
+       
+          <div class="w-1/8  mb-2"  v-if="showSingleBroker">
+            <div >
+
+              <div @click="togglePortfolio" class="bg-white rounded-sm h-10 w-2/3 mx-auto text-center py-2  text-sm font-semibold cursor-pointer hover:scale-110 ">
+              Portfolio
+              </div>
+              <div @click="toggleDelivery" class="bg-white mt-4 rounded-sm h-10 w-2/3 mx-auto text-center py-2 text-sm font-semibold cursor-pointer hover:scale-110 ">
+              Delivery
+              </div>
+              <div @click="toggleDeals" class="bg-white mt-4 rounded-sm h-10 w-2/3 mx-auto text-center py-2 text-sm font-semibold cursor-pointer hover:scale-110 ">
+              Deals
+              </div>
+              <div @click="toggleReview" class="bg-white mt-4 rounded-sm h-10 w-2/3 mx-auto text-center py-2 text-sm font-semibold cursor-pointer hover:scale-110 ">
+              Review
+              </div>
+              <div  @click="toggleSales" class="bg-white mt-4 rounded-sm h-10 w-2/3 mx-auto text-center py-2 text-sm font-semibold cursor-pointer hover:scale-110 " >
+              Sales
+              </div>
+              <div class="bg-white mt-4 rounded-sm h-10 w-2/3 mx-auto text-center py-2 text-sm font-semibold cursor-pointer hover:scale-110" @click="toggleSkills">
+              Skills
+              </div>
+             
+            </div>
+          </div>
+          
+          
+        </div>
         <div
           v-if="brokers.length > 0"
-          class="flex mt-5 text-xs bg-white py-3 font-bold rounded-md px-5 w-11/11"
+          class="flex mt-5 text-xs bg-white py-3 font-bold rounded-md px-5 w-11/11" 
         >
         
           <div class="w-1/13">Name</div>
@@ -229,24 +263,7 @@
           <div class="w-1/10 ml-3">  {{ broker.user.email }} </div>
   
           <div class="py-2 px-4 w-1/5 ml-10">
-            <!-- <span v-if="!campany.showFullDescription">
-              {{ campany.description.slice(0, 50) }}...
-              <a
-                href="#"
-                @click.prevent="toggleDescription(campany)"
-                class="text-blue-400 underline"
-                >Show more</a
-              >
-            </span>
-            <span v-else>
-              {{ campany.description }}
-              <a
-                href="#"
-                @click.prevent="toggleDescription(campany)"
-                class="text-blue-400 underline"
-                >Show less</a
-              >
-            </span> -->
+   
             {{ broker.category.catigoryName }}
           </div>
           <div class="w-1/6">{{ broker.user.phone }}</div>
@@ -263,11 +280,9 @@
           <div class="break-words max-w-[120px] w-1/6">
             {{ broker.user.buys }}
           </div>
-          <!-- <div class="break-words max-w-[120px] w-1/13">
-            {{ broker.user.sex }}
-          </div> -->
+     
          <div class="flex justify-between w-1/9 ml-6">
-            <div class="relative hover:scale-130 cursor-pointer shadow-md h-8" @click="toggleShowDetails(broker.id)">
+            <div class=" hover:scale-130 cursor-pointer shadow-md h-8 relative" @click="toggleShowDetails(broker.user.email)">
               <img src="/view.png" alt="" class="hover:text-yellow-400 "/>
           
             </div>
@@ -283,27 +298,20 @@
         </div>
       </div>
   
-      <!-- <div v-if="brokers.length > 0" class="px-3">
-        <h1 class="mt-25 mb-3 text-gray-400 font-semibold">Campany Status</h1>
-        <div class="bg-white w-1/2 px-4 py-4 shadow-md">
-          <h1 class="text-gray-400 text-sm mb-3">Last Campany Performance</h1>
-          <BarChart v-if="chartData.labels.length" :chartData="chartData" />
-          <p v-else>Loading chart...</p>
-        </div>
-      </div> -->
+ 
     </AdminLayout>
   </template>
   
   <script>
   import AdminLayout from "@/layout/AdminLayout.vue";
   import { defineComponent, onMounted, ref } from "vue";
-  //import BarChart from "@/components/BarChart.vue";
+
   import axios from "axios";
   
   export default {
     components: {
       AdminLayout,
-      //BarChart,
+   
     },
     setup() {
       const brokers = ref([]);
@@ -316,78 +324,99 @@
       const loadingbrokers4 = ref({})
       const errors = ref("");
       const showDetails = ref(false);
-      // Define chartData as a reactive reference
-      // const chartData = ref({
-      //   labels: ["M", "T", "W", "T", "F", "S", "S"],
-      //   datasets: [
-      //     {
-      //       label: "Approved",
-      //       backgroundColor: "#007bff",
-      //       data: [80, 50, 15, 40, 25, 20, 30],
-      //     },
-      //     {
-      //       label: "Ban",
-      //       backgroundColor: "#ff4d4d",
-      //       data: [45, 48, 10, 45, 18, 60, 15],
-      //     },
-      //   ],
-      // });
-  //     const approveCampany = async (id) => {
-  //       //alert(`You clicked me`)
-  //       console.log('You Clicked Me')
-  //       loadingbrokers3.value[id] = true;
-  //   try {
-  //     const response = await axios.put(`https://bizethio-backend-production-944c.up.railway.app/api/companies/${id}`, {
-  //       status: 'approved' 
-  //     });
-  //     if (singleampany.value.id === id) {
-  //       singleampany.value.status = 'approved'; 
-  //     }
-  //     const index = brokers.value.findIndex(c => c.id === id);
-  //     if (index !== -1) {
-  //       brokers.value[index].status = 'approved'; 
-  //       singleampany.value[index].status = 'approved'; 
-        
-  //     }
-  //     loadingbrokers3.value[id] = false;
-  //     console.log('Status:', response.data.status); 
-  //   } catch (error) {
-  //     loadingbrokers3.value = false
-  //     console.error('Error updating the campany status:', error);
-  //   } finally {
-  //     loadingbrokers3.value[id] = false; 
-  //   }
-  // };
+      const showSkills  = ref(false);
+      const showPortfolio = ref(false);
+      const showDeal = ref(false);
+      const showSales = ref(false);
+      const showDelivery  = ref(false);
+      const showReview = ref(false);
+      const skills = ref([]);
+      const deal = ref([])
+      const deals = ref([]);
+      const singleBroker = ref([]);
+      const showSingleBroker = ref(false)
+      const delivery = ref([]);
+      const deliveries = ref([])
+
+      
+  const toggleSkills = async(id)=>{
+    
+    console.log('skill', skills.value)
+
+ 
+showSkills.value = true
+  }
+  const toggleSales = async(id)=>{
   
-  // const rejectCampany = async (id) => {
-  //   loadingbrokers4.value[id] = true;
-  //   try {
-  //     const response = await axios.put(`https://bizethio-backend-production-944c.up.railway.app/api/companies/${id}`, {
-  //       status: 'rejected' 
-  //     });
-  //     if (singleampany.value.id === id) {
-  //       singleampany.value.status = 'rejected'; 
-  //     }
-  //     const index = brokers.value.findIndex(c => c.id === id);
-  //     if (index !== -1) {
-  //       brokers.value[index].status = 'rejected'; 
-  //       singleampany.value[index].status = 'rejected'; 
-        
-  //     }
-  //     loadingbrokers4.value[id] = false;
-  //     console.log('Status:', response.data.status); 
-  //   } catch (error) {
-  //     loadingbrokers4.value[id] = false;
-  //     console.error('Error updating the campany status:', error);
-  
-  //   } finally {
-  //     loadingbrokers4.value[id] = false; 
-  //   }
-  // };
+showSales.value = true
+  }
+  const toggleDelivery = async(id)=>{
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      console.log('deliveries',deliveries.value)
+showDelivery.value = !showDelivery.value
+  }
+  const toggleDetails = async(id)=>{
+showDetails.value = true
+  }
+  const toggleDeals = async(id)=>{
+    // window.scrollTo({
+    //     top: 0,
+    //     behavior: "smooth",
+    //   });
+      console.log('deals',deals.value)
+showDeal.value = true
+  }
+  const toggleReview = async(id)=>{
+
+showReview.value = true
+  }
+  const togglePortfolio = async ()=>{
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+showPortfolio.value = true
+  }
   const toggleShowDetails = async (id) => {
+    loadingbrokers2.value = true
+    showSkills.value = false
+    showSales.value  = false
+    showDetails.value = false
+    showDeal.value = false
+    showReview.value  = false
+    showPortfolio.value = false
+    showDelivery.value = false
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     const response = await axios.get(`/api/brokers/${id}`);
-    console.log('responese',response)
-showDetails.value = !showDetails.value
+    singleBroker.value = response.data;
+    showSingleBroker.value = true
+    console.log('single broker',singleBroker.value)
+   // console.log('responese',response.data)
+    skills.value = response.data.skills
+    deal.value = response.data.deals
+    delivery.value= response.data.delivery
+    delivery.value = delivery.value.map((delivery)=>{
+      deliveries.value = delivery
+      console.log('deliveries',delivery)
+    })
+    console.log('delivery',delivery.value)
+   // console.log('alldeal',deal.value)
+    deal.value = deal.value.map((deal)=>{
+     deals.value = deal
+     console.log('deals',deal)
+
+    })
+    console.log('dealll',deals.value)
+    // console.log('deals', deals.value)
+    console.log('skill', skills.value)
+//showDetails.value = !showDetails.value
+loadingbrokers2.value = false
   };
       const toggleDescription = (campany) => {
         campany.showFullDescription = !campany.showFullDescription; 
@@ -404,66 +433,13 @@ showDetails.value = !showDetails.value
           errors.value = error;
         }
       };
-      // const fetchSingleCampany = async (id) => {
-      //   window.scrollTo({
-      //     top: 0,
-      //     behavior: "smooth",
-      //   });
-      //   loadingbrokers2.value = true
-      //   const response = await axios.get(`https://bizethio-backend-production-944c.up.railway.app/api/companies/${id}`);
-      //   singleampany.value = response.data;
-      //   console.log("single campany", singleampany.value);
-      //   loadingbrokers2.value = false
   
-      // };
-      // const getImageUrl = (images) => {
-      //   if (images) {
-      //     try {
-      //       const parsedImages = JSON.parse(images);
-      //       return parsedImages.length > 0
-      //         ? parsedImages[0]
-      //         : "/defalt-campany-image.jpg";
-      //     } catch (error) {
-      //       console.error("Error parsing image URL:", error);
-      //       return "/defalt-campany-image.jpg";
-      //     }
-      //   }
-      //   return "/defalt-campany-image.jpg";
-      // };
    
       onMounted(() => {
-        //fetchBrokers();
-        //  const token = localStorage.getItem("token");
-        // if (token) {
-        //   // axios.defaults.withCredentials = true;
-        //   axios.defaults.headers.common["Authorization"] = ` Bearer ${token}`;
-  
-        // }
+ 
         fetchBrokers();
   
-        //   // try {
-        //   //           if (singleampany.value.images) {
-        //   //               images.value = JSON.parse(singleampany.value.images);
-        //   //           } else {
-        //   //               console.error("Images data is undefined");
-        //   //           }
-        //   //       } catch (error) {
-        //   //           console.error("Error parsing images:", error);
-        //   //       }
-  
-        //   //       // Parse the social media links into an object with error handling
-        //   //       try {
-        //   //           if (singleampany.value.social_media_links) {
-        //   //               socialMediaLinks.value = JSON.parse(singleampany.value.social_media_links);
-        //   //           } else {
-        //   //               console.error("Social media links data is undefined");
-        //   //           }
-        //   //       } catch (error) {
-        //   //           console.error("Error parsing social media links:", error);
-        //   //       }
-        // } else {
-        //   this.$router.push({ name: "SignIn" });
-        // }
+   
       });
       return {
         //chartData,
@@ -483,7 +459,27 @@ showDetails.value = !showDetails.value
         loadingbrokers3,
         loadingbrokers4,
         showDetails,
-        toggleShowDetails
+        toggleShowDetails,
+        showSkills,
+        showPortfolio,
+        showDeal,
+        showDelivery,
+        showReview,
+        showSales,
+        toggleSkills,
+        toggleSales,
+        toggleDelivery,
+        toggleDetails,
+        toggleDeals,
+        toggleReview,
+        togglePortfolio,
+        skills,
+        deals,
+        deal,
+        singleBroker,
+        delivery,
+        deliveries,
+        showSingleBroker
       };
     },
   };

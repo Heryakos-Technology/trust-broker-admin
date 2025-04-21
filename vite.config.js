@@ -26,14 +26,14 @@ export default defineConfig({
   //       changeOrigin: true,
   //       rewrite: (path) => path.replace(/^\/api/, ''),
   //     },
-=======
+
 
       
   //   },
   // },
-   base: process.env.NODE_ENV === 'production'
-    ? '/trust-broker-admin/'
-    : '/',
+  //  base: process.env.NODE_ENV === 'production'
+  //   ? '/trust-broker-admin/'
+  //   : '/',
 })
 
 

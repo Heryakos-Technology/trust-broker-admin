@@ -426,7 +426,6 @@ loadingbrokers2.value = false
         try {
 
           const response = await axios.get(`https://trust-broker-backend-1.onrender.com/api/brokers/`);
-
           brokers.value = response.data;
           console.log("brokers", brokers.value);
           loadingbrokers.value = false;

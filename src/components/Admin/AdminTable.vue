@@ -548,7 +548,7 @@ const generateSignature = (params) => {
         <div class="p-3 lg:py-5 text-sm  text-black -ml-16 left-0 bg-white z-10">Customer</div>
         <div class="p-3 lg:py-5 text-sm  text-black -ml-16  left-0 bg-white z-10">Email</div>
         <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Phone</div>
-        <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Delivery Status</div>
+        <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Delivery option</div>
         <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Deal Status</div>
         <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Action</div>
       </div>

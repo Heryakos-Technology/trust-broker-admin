@@ -23,7 +23,7 @@ export default defineConfig({
         
         target: "https://trust-broker-backend-1.onrender.com/api/",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+       // rewrite: (path) => path.replace(/^\/api/, ''),
       },
       
     },
@@ -34,4 +34,3 @@ export default defineConfig({
 })
 
 
-///

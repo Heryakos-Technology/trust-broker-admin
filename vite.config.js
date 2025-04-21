@@ -31,9 +31,9 @@ export default defineConfig({
       
   //   },
   // },
-  //  base: process.env.NODE_ENV === 'production'
-  //   ? '/trust-broker-admin/'
-  //   : '/',
+   base: process.env.NODE_ENV === 'production'
+    ? '/trust-broker-admin/'
+    : '/',
 })
 
 

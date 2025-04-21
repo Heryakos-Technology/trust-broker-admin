@@ -16,6 +16,7 @@ const selectedCategoryId = ref(null);
 const errorMessage = ref("");
 const tempcustomers = ref(null);
 const deliverys = ref([]);
+
 // Loading states for each operation
 const loading = ref({
   add: false,
@@ -26,7 +27,7 @@ const loading = ref({
 
 const categories = ref([]);
 const deals = ref([]);
-const customer = ref({});
+const customers = ref({});
 let rowCounter = 1;
 
 const formdata = ref({
@@ -50,7 +51,7 @@ const brokers = ref([]);
 const buys = ref([]);
 const previewImage = ref(null);
 const rates = ref([]);
-const selectedBroker = ref(null);
+const selectedCustomer = ref(null);
 
 onMounted(async () => {
   await fetchDeals();
@@ -67,42 +68,38 @@ onMounted(async () => {
 onMounted(async () => {
   await fetchRating();
 });
+onMounted(async () => {
+  await fetchCustomers();
+});
 
-
-const customerData = localStorage.getItem("customers"); // Adjust the key if necessary
-
-if (customerData) {
-
-  const customer = JSON.parse(customerData);
-  
-  // Accessing specific properties
-  console.log("User ID:", customer.userId);
-  console.log("Full Name:", customer.fullName);
-  console.log("Email:", customer.email);
-  console.log("Phone:", customer.phone);
-  // Add more properties as needed
-} else {
-  console.log("No customer data found in local storage.");
-}
-// const dealsData = localStorage.getItem("deals");
-
-// if (dealsData) {
-
-//   const deal = JSON.parse(dealsData);
-  
-// } else {
-//   console.log("No customer data found in local storage.");
-// }
-
-const handleRowClick = (brokerId) => {
+const showDetails = (customerId) => {
   // Check if the currently fetched broker's ID matches the clicked broker ID
-  if (brokers.value && brokers.value.id === brokerId) {
-    selectedBroker.value = brokers.value; // Set the selected broker directly
-  } else {
-    selectedBroker.value = null; // If no match, set to null
-  }
+  selectedCustomer.value = customers.value.find(customer => customer.customerId === customerId);
 };
 
+const fetchCustomers = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get('/api/customers', {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },
+    });
+
+    // Store the entire customer data
+    customers.value = response.data; 
+
+    // Associate buys with corresponding customers
+    customers.value.forEach(customer => {
+      customer.buys = buys.value[customer.customerId] || []; // Assign buys from the map
+    });
+
+    console.log("Fetched customers with buys:", customers.value);
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+  }
+};
 
 const fetchBroker = async () => {
   try {
@@ -114,15 +111,18 @@ const fetchBroker = async () => {
       },
     });
 
-    brokers.value = response.data[0].user; 
-    
+    // Assuming response.data is an array of brokers
+    brokers.value = response.data; // Adjust if response structure is different
 
-//  const baseUrl = 'https://mybrokerapp.com/images/';
-//     brokers.value.picture = baseUrl + brokers.value.picture;
-//     brokers.value.identificationCard = baseUrl + brokers.value.identificationCard;
+    // If you need to modify pictures or identification cards
+    const baseUrl = 'https://mybrokerapp.com/images/';
+    brokers.value.forEach(broker => {
+      broker.picture = baseUrl + broker.picture;
+      broker.identificationCard = baseUrl + broker.identificationCard;
+    });
 
     localStorage.setItem("brokers", JSON.stringify(brokers.value));
-    console.log("broker", brokers.value);
+    console.log("brokers", brokers.value);
   } catch (error) {
     console.error("Error fetching brokers:", error);
   }
@@ -131,16 +131,28 @@ const fetchBuys = async () => {
   try {
     const token = localStorage.getItem("token");
 
-
     const response = await axios.get('/api/buys', {
       headers: {
         Authorization: `Bearer ${token}`, 
       },
     });
 
-    buys.value = response.data[0]; 
+    // Assuming response.data is an array of buys
+    const buysData = response.data; 
+
+    // Create a mapping of customerId to their buys
+    const buysMap = {};
+    buysData.forEach(buy => {
+      const customerId = buy.customerId; // Ensure buy has customerId
+      if (!buysMap[customerId]) {
+        buysMap[customerId] = [];
+      }
+      buysMap[customerId].push(buy); // Push the buy to the corresponding customer
+    });
+
+    buys.value = buysMap; // Store the mapping in a reactive variable
     localStorage.setItem("buys", JSON.stringify(buys.value));
-    console.log("buys", buys.value);
+    console.log("Buys map:", buys.value);
   } catch (error) {
     console.error("Error fetching buys:", error);
   }
@@ -169,20 +181,7 @@ const fetchDelivery = async () => {
     console.error("Error fetching delivery:", error);
   }
 };
-// const fetchDeals = async () => {
-//   try {
-//     loading.value.fetch = true;
-//     // categories.value = await getAllCategories();
-//     const response = await axios.get('/api/deals')
-//     deals.value = response.data
-//     console.log('deals', deals.value)
 
-//   } catch (error) {
-//     console.error("Error fetching categories:", error);
-//   } finally {
-//     loading.value.fetch = false;
-//   }
-// };
 const fetchDeals = async () => {
   try {
     const token = localStorage.getItem("token");
@@ -197,9 +196,9 @@ const fetchDeals = async () => {
   },
 });
 
-    deals.value = response.data[0].user; 
-    tempdeals.value = { ...deals.value };
-    console.log("hello",deals.value);
+    deals.value = response.data[0]; 
+    // tempdeals.value = { ...deals.value };
+    console.log("deals",deals.value);
   } catch (error) {
     console.error("Error fetching deals:", error); 
   }
@@ -499,111 +498,98 @@ const generateSignature = (params) => {
 
     <div class="flex flex-col items-center">
     <!-- Broker Information Section -->
-    <div v-if="selectedBroker" class="ml-40 mb-5">
-      <p class="text-[22px]">Broker</p>
-      <div class="w-96 h-[450px] pt-32 p-5 bg-[#57B4D3] shadow-2xl rounded-md font-semibold text-stone-200">
-        <img :src="brokers.picture" alt="Broker Picture" class="-mt-26">
-        <div class="flex">
-          <p class="w-56">{{ brokers.fullName }}</p>
-          <p>{{ brokers.sex }}</p>
-        </div>
-        <hr class="mt-2">
-        <div class="flex mt-4 space-x-4">
-          <p class="w-56">Email</p>
-          <p>{{ brokers.email }}</p>
-        </div>
-        <div class="flex mt-4 space-x-4">
-          <p class="w-56">Phone</p>
-          <p>{{ brokers.phone }}</p>
-        </div>
-        <div class="flex mt-4 space-x-4">
-          <p class="w-56">City</p>
-          <p>{{ brokers.city }}</p>
-        </div>
-        <div class="flex mt-4 space-x-4">
-          <p class="w-56">Subcity</p>
-          <p>{{ brokers.subcity }}</p>
-        </div>
-        <div class="flex mt-4 space-x-4">
-          <p class="w-56">Kebele</p>
-          <p>{{ brokers.kebele }}</p>
-        </div>
-        <div class="flex mt-4 space-x-4">
-          <p class="w-56">Identification Card</p>
-          <img :src="brokers.identificationCard" alt="ID Card" class="w-20 h-auto">
-        </div>
-        <div class="flex mt-4 space-x-4">
-          <p class="w-56">Buys</p>
-          <p>{{ buys.quantity }}</p>
-        </div>
-      </div>
+    <div v-if="selectedCustomer" class="ml-40 mb-5">
+  <p class="text-[22px]">Customer</p>
+  <div class="w-96 h-[450px] pt-32 p-5 bg-[#57B4D3] shadow-2xl rounded-md font-semibold text-stone-200">
+    <img :src="selectedCustomer.user.picture" alt="Customer Picture" class="-mt-26">
+    <div class="flex">
+      <p class="w-56">{{ selectedCustomer.user.fullName }}</p>
+      <p>{{ selectedCustomer.user.sex }}</p>
     </div>
+    <hr class="mt-2">
+    <div class="flex mt-4 space-x-4">
+      <p class="w-56">Email</p>
+      <p>{{ selectedCustomer.user.email }}</p>
+    </div>
+    <div class="flex mt-4 space-x-4">
+      <p class="w-56">Phone</p>
+      <p>{{ selectedCustomer.user.phone }}</p>
+    </div>
+    <div class="flex mt-4 space-x-4">
+      <p class="w-56">City</p>
+      <p>{{ selectedCustomer.user.city }}</p>
+    </div>
+    <div class="flex mt-4 space-x-4">
+      <p class="w-56">Subcity</p>
+      <p>{{ selectedCustomer.user.subcity }}</p>
+    </div>
+    <div class="flex mt-4 space-x-4">
+      <p class="w-56">Kebele</p>
+      <p>{{ selectedCustomer.user.kebele }}</p>
+    </div>
+    <div class="flex mt-4 space-x-4">
+      <p class="w-56">Identification Card</p>
+      <img :src="selectedCustomer.user.identificationCard" alt="ID Card" class="w-20 h-auto">
+    </div>
+    <div class="flex mt-4 space-x-4">
+      <p class="w-56">Buys Quantity</p>
+      <p>{{ selectedCustomer.buys.length > 0 ? selectedCustomer.buys[0].quantity : 'N/A' }}</p>
+    </div>
+  </div>
+</div>
 
     <!-- Customer Table Section -->
-    <div class="overflow-x-auto w-[1000px] xl:col-span-2  px-4 pb-40">
-      <div class="">
-        <div class="min-w-[600px] max-w-[100%] rounded-lg shadow-md">
-          <!-- Table Header -->
-          <div  class="grid grid-cols-6  bg-white uppercase font-bold">
-            <div class="p-3 lg:py-5 text-sm text-black sticky left-0 bg-white z-10">No</div>
-            <!-- <div class="p-3 lg:py-5 text-sm text-black sticky left-0 bg-white z-10">Customer</div> -->
-            <div class="p-3 lg:py-5 text-sm text-black sticky left-0 bg-white z-10">Broker</div>
-            <div class="p-3 lg:py-5 text-sm text-black sticky left-0 bg-white z-10">Rate</div>
-            <div class="p-3 lg:py-5 text-sm text-black sticky left-0 bg-white z-10">Delivery Status</div>
-            <div class="p-3 lg:py-5 text-sm text-black sticky left-0 bg-white z-10">Deal Status</div>
-            <div class="p-3 lg:py-5 text-sm text-black sticky left-0 bg-white z-10">Action</div>
-          </div>
-          <!-- Table Body -->
-          <div
-          
-            class=" grid grid-cols-6  my-3 bg-white font-semibold lg:py-2 text-[14px]"
+    <div class="overflow-x-auto w-[1000px] xl:col-span-2 px-4 pb-40">
+  <div class="">
+    <div class="min-w-[600px] max-w-[100%] rounded-lg shadow-md">
+      <!-- Table Header -->
+      <div class="grid grid-cols-7 bg-white uppercase font-bold">
+        <div class="p-3 lg:py-5   text-sm text-black  left-0 bg-white z-10">No</div>
+        <div class="p-3 lg:py-5 text-sm  text-black -ml-16 left-0 bg-white z-10">Customer</div>
+        <div class="p-3 lg:py-5 text-sm  text-black -ml-16  left-0 bg-white z-10">Email</div>
+        <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Phone</div>
+        <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Delivery Status</div>
+        <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Deal Status</div>
+        <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Action</div>
+      </div>
+
+      <!-- Table Body -->
+      <div v-for="(customer, index) in customers" :key="customer.customerId" class="grid grid-cols-7 my-3 bg-white font-semibold lg:py-2 text-[14px]">
+        <div class="p-3  text-[14px] text-black font-bold  left-0 bg-white z-10">
+          {{ index + 1 }}
+        </div>
+        <div class="p-3 -ml-16 text-[14px] text-black font-bold   bg-white z-10">
+          {{ customer.user.fullName }} <!-- Customer's full name -->
+        </div>
+        <div class="p-3 -ml-16 text-[14px] text-black font-bold">
+          {{ customer.user.email }} <!-- Customer's email -->
+        </div>
+        <div class="p-3  text-[14px] text-black font-bold">
+          {{ customer.user.phone }} <!-- Customer's phone -->
+        </div>
+        <div class="p-3 text-[14px] text-black font-bold">
+          {{ customer.deals.length > 0 ? customer.deals[0].deliveryOption : 'N/A' }} <!-- Delivery Status -->
+        </div>
+        <div class="p-3 text-[14px] text-black font-bold">
+          {{ customer.deals.length > 0 ? customer.deals[0].dealsStatus : 'N/A' }} <!-- Deal Status -->
+        </div>
+        <div class="p-3 text-[14px] flex gap-x-2 lg:gap-x-4 justify-center -ml-16">
+          <p @click="showDetails(customer.customerId)" class="cursor-pointer text-[#57B4D3]">details</p>
+          <button
+            @click="handleDelete(customer)"
+            class="text-red-500 hover:text-red-700 text-[14px] cursor-pointer transition duration-200"
+            title="Delete"
+            :disabled="loading.add || loading.update || loading.delete"
           >
-            <div class="p-3 text-[14px]  text-black font-bold sticky left-0 bg-white z-10">
-              {{ rowCounter++ }}
-            </div>
-            <!-- <div class="p-3 text-sm  text-black font-bold sticky left-0 bg-white z-10">
-              {{ customer.fullName }}
-            </div> -->
-            <div class="p-3 text-[14px]  text-black font-bold sticky left-0 bg-white z-10">
-              {{ brokers.fullName }}
-            </div>
-            <div class="p-3 text-[14px]  text-black font-bold">
-              {{ rates.rate }}
-            </div>
-            <div class="p-3 text-[14px]  text-black font-bold">
-              {{ deliverys.deliveryStatus }}
-            </div>
-            <div class="p-3 text-[14px]  text-black font-bold">
-              {{ deals.dealStatus }}
-            </div>
-            <div class="p-3 text-[14px] flex gap-x-2 lg:gap-x-4 justify-center -ml-16">
-             <p @click="handleRowClick(brokers.id)" class="cursor-pointer text-[#57B4D3]">details</p>
-              <button
-                @click="handleDelete(category)"
-                class="text-red-500 hover:text-red-700 text-[14px] cursor-pointer transition duration-200"
-                title="Delete"
-                :disabled="loading.add || loading.update || loading.delete"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="size-5 lg:size-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M4 7h16m-4 4v6m-4-6v6"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 lg:size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M4 7h16m-4 4v6m-4-6v6" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
+  </div>
+</div>
     </div>
   </div>
 </template>

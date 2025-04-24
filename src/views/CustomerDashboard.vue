@@ -10,7 +10,7 @@ const customers = ref(null);
 const isModalOpen = ref(false);
 const imageFile = ref(null);
 const loading = ref(false);
-const tempcustomers = ref(null);
+const tempUser = ref(null);
 // const sales = ref(null);
 
 // Cloudinary configuration
@@ -33,15 +33,12 @@ onMounted(async () => {
 onMounted(async () => {
   await fetchLoggedInUser();
 });
-// onMounted(async () => {
-//   await fetchSales();
-// });
+onMounted(async () => {
+  await fetchSales();
+});
 
-// onMounted(async () => {
-//   await fetchSales();
-// });
 
-let totalCustomers = 0; // Declare a reactive variable for total customers
+let totalCustomers = 0; 
 
 const fetchCustomers = async () => {
   try {
@@ -54,10 +51,10 @@ const fetchCustomers = async () => {
     });
 
     customers.value = response.data[0].user; 
-    // tempcustomers.value = { ...customers.value };
+    // tempUser.value = { ...customers.value };
 
-    // Update totalCustomers based on the response
-    totalCustomers = response.data.length; // Adjust based on actual data structure
+  
+    totalCustomers = response.data.length;
     console.log("Total number of customers:", totalCustomers);
 
     localStorage.setItem("customers", JSON.stringify(customers.value));
@@ -77,8 +74,13 @@ const fetchLoggedInUser = async () => {
         });
 
         if (response.data) {
-          users.value = response.data[0]; 
-          console.log("Fetched logged-in user:", users.value);
+          users.value = response.data[6]; 
+          localStorage.setItem('user_id', response.data[0].userId)
+          localStorage.setItem('userInformation', users.value);
+          console.log('imageeeeeeeeeeeee', response.data[0].picture)
+          
+          console.log('response', response)
+          tempUser.value = { ...users.value };
         }
       } catch (error) {
         console.error("Error fetching logged-in user:", error);
@@ -95,11 +97,10 @@ const fetchDeals = async () => {
       },
     });
 
-    deals.value = response.data[0]; 
-    tempcustomers.value = { ...deals.value };
+    deals.value = response.data; 
 
-    // Update totalCustomers based on the response
-    totalDeals = response.data.length; // Adjust based on actual data structure
+ 
+    totalDeals = response.data.length; 
     console.log("Total number of deals:", totalDeals);
 
     localStorage.setItem("deals", JSON.stringify(deals.value));
@@ -108,46 +109,46 @@ const fetchDeals = async () => {
     console.error("Error fetching deals:", error);
   }
 };
-// let totalSales = 0; 
-// const fetchSales = async () => {
-//   try {
-//     const token = localStorage.getItem("token");
+ let totalSales = 0; 
+ const fetchSales = async () => {
+   try {
+     const token = localStorage.getItem("token");
 
-//     const response = await axios.get('/api/sales', {
-//       headers: {
-//         Authorization: `Bearer ${token}`, 
-//       },
-//     });
+     const response = await axios.get('/api/sales', {
+       headers: {
+         Authorization: `Bearer ${token}`, 
+       },
+     });
 
-//     sales.value = response.data[0].user; 
-//     tempcustomers.value = { ...sales.value };
+     sales.value = response.data[0].user; 
 
-//     // Update totalCustomers based on the response
-//     totalSales = response.data.length; // Adjust based on actual data structure
-//     console.log("Total number of sales:", totalSales);
+      
+     totalSales = response.data.length; 
+     console.log("Total number of sales:", totalSales);
 
-//     localStorage.setItem("sales", JSON.stringify(sales.value));
-//     console.log("Fetched sales:", sales.value);
-//   } catch (error) {
-//     console.error("Error fetching sales:", error);
-//   }
-// };
+     localStorage.setItem("sales", JSON.stringify(sales.value));
+     console.log("Fetched sales:", sales.value);
+   } catch (error) {
+     console.error("Error fetching sales:", error);
+   }
+ };
 
 
 
 const openModal = () => {
   isModalOpen.value = true;
+  tempUser.value = { ...users.value };
 };
 
 const closeModal = () => {
   isModalOpen.value = false;
-  tempcustomers.value = { ...customers.value };
+  tempUser.value = { ...users.value };
   clearImageUpload();
 };
 
 const updateUser = (updatedUser) => {
-  customers.value = updatedUser;
-  localStorage.setItem("customers", JSON.stringify(updatedUser));
+  users.value = updatedUser;
+  localStorage.setItem("users", JSON.stringify(updatedUser));
 };
 
 const saveChanges = async () => {
@@ -155,31 +156,30 @@ const saveChanges = async () => {
     loading.value = true;
     const userId = localStorage.getItem("user_id");
 
-    let imageUrl = tempcustomers.value.profile_picture_url;
+    let imageUrl = tempUser.value.picture;
     if (imageFile.value) {
       const cloudinaryResponse = await uploadImageToCloudinary(imageFile.value);
       imageUrl = cloudinaryResponse.secure_url;
     }
 
     const userData = {
-      ...tempcustomers.value,
-      profile_picture_url: imageUrl,
+      ...tempUser.value,
+      picture: imageUrl,
     };
-
-    const response = await axios.put(`https://broker-service-api.herokuapp.com/api/customers/${userId}`, userData, {
+    const response = await axios.put(`/api/users/${userId}`, userData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });
-
+    users.value =response.data[0];
     console.log("User Information updated:", response.data);
     updateUser(response.data);
     closeModal();
-    // Assuming you have a toast notification method available
+    
     $toast.success("Profile updated successfully!", { position: 'top' });
   } catch (error) {
     console.error("Error updating user information:", error.response || error.message);
-    // Assuming you have a toast notification method available
+    
     $toast.error("Failed to update profile.", { position: 'top' });
   } finally {
     loading.value = false;
@@ -219,7 +219,7 @@ const uploadFile = async () => {
       formData
     );
     uploaded.value = "Photo Uploaded Successfully";
-    tempcustomers.value.profile_picture_url = response.data.secure_url;
+    tempUser.value.picture = response.data.secure_url;
     imageFile.value = file.value;
   } catch (error) {
     uploaded.value = "Failed to upload photo";
@@ -248,11 +248,10 @@ const clearImageUpload = () => {
             ></div>
     
             <div class="">
-              <img
-                     src="/images/AdminPage/admin_user_profile.png"
-                      :alt="admin_profile_setting"
-                      class="-mt-56 mx-auto"
-                    />
+              <div
+          class="rounded-full size-48 bg-cover bg-center absolute top-[-150px] left-[25%]"
+          :style="{ backgroundImage: `url(${users.picture})` }"
+        ></div>
               <div class="px-10">
                 <h1 class="font-bold text-center uppercase text-xl">
                   {{ users.fullName }}
@@ -356,11 +355,11 @@ const clearImageUpload = () => {
         <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
 
         <div class="mb-4">
-          <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+          <label for="fullName" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
           <input
             type="text"
-            id="name"
-            v-model="tempcustomers.name"
+            id="fullName"
+            v-model="tempUser.fullName"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
@@ -370,7 +369,7 @@ const clearImageUpload = () => {
           <input
             type="text"
             id="phone"
-            v-model="tempcustomers.phone_number"
+            v-model="tempUser.phone"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
@@ -380,7 +379,7 @@ const clearImageUpload = () => {
           <input
             type="text"
             id="city"
-            v-model="tempcustomers.city"
+            v-model="tempUser.city"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
@@ -390,7 +389,16 @@ const clearImageUpload = () => {
           <input
             type="text"
             id="subcity"
-            v-model="tempcustomers.sub_city"
+            v-model="tempUser.subcity"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="kebele" class="block text-gray-700 text-sm font-bold mb-2">kebele:</label>
+          <input
+            type="text"
+            id="kebele"
+            v-model="tempUser.kebele"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
@@ -400,7 +408,7 @@ const clearImageUpload = () => {
           <label for="image" class="block text-gray-700 text-sm font-bold mb-1">
             Profile Picture
           </label>
-          <img :src="tempcustomers.profile_picture_url" alt="Profile Picture" class="w-20 h-20 rounded-full mb-2">
+          <img :src="tempUser.picture" alt="Profile Picture" class="w-20 h-20 rounded-full mb-2">
           <div class="relative w-52 h-36 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:bg-gray-100">
             <input type="file" id="image" class="absolute w-full h-full top-0 left-0 opacity-0 cursor-pointer" @change="onFileSelected" accept="image/*" />
             <img v-if="previewImage" :src="previewImage" alt="Preview" class="max-w-full max-h-full object-cover" />

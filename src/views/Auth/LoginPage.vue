@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import Header from "@/components/HomeView/Header.vue";
+import router from "@/router";
 
 const formData = ref({
   phone_number: "",
@@ -14,6 +15,7 @@ const togglePassword = () => {
 
 const handleSubmit = (e) => {
   e.preventDefault();
+  router.push('/BrokerDashbord')
   // Handle login logic here
   console.log("Login attempted with:", formData.value);
 };

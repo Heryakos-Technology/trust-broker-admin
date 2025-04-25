@@ -27,7 +27,7 @@ import Header from "@/components/HomeView/Header.vue";
         </p>
 
         <RouterLink
-          :to="{ name: 'Home' }"
+          :to="{ name: 'CustomerDashboard' }"
           class="w-fit py-3 px-2 bg-[#2D479B] rounded-md shadow-sm hover:bg-blue-800 text-white"
         >
           Explore Dashboard

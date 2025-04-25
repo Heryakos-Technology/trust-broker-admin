@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-
+import router from "@/router";
 export const useAuthStore = defineStore("authStore", {
   state: () => {
     return {
@@ -42,29 +42,30 @@ export const useAuthStore = defineStore("authStore", {
         console.log(this.user);
         this.errors = {};
         localStorage.setItem("token", data.token);
+        localStorage.setItem("userInfo", JSON.stringify(data.user)); // Store user info
         this.user = data.user;
-        this.router.push({ name: "home" });
+        router.push({ name: "CustomerDashboard" });
       }
     },
 
-    /**************** Logout  ***************/
-
+    /********************* Logout User ********************** */
     async logout() {
-      const res = await fetch("https://trust-broker-backend-1.onrender.com/api/logout", {
-        method: "post",
-        headers: {
-          authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      try {
 
-      const data = await res.json();
-      console.log(data);
+        localStorage.clear();
 
-      if (res.ok) {
+        // Clear user state
         this.user = null;
-        this.errors = {};
-        localStorage.removeItem("token");
-        this.router.push({ name: "welcome" });
+
+        // Navigate to sign in page
+        router.push({ name: "Home" });
+
+
+        return true;
+      } catch (error) {
+        console.error("Logout failed:", error);
+        this.errors = error.response?.data || { message: "Failed to logout" };
+        return false;
       }
     },
   },

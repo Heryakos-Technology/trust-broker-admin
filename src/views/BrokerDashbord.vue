@@ -393,7 +393,7 @@ showPortfolio.value = true
         top: 0,
         behavior: "smooth",
       });
-    const response = await axios.get(`/api/brokers/${id}`);
+    const response = await axios.get(`https://trust-broker-backend-1.onrender.com/api/brokers/${id}`);
     singleBroker.value = response.data;
     showSingleBroker.value = true
     console.log('single broker',singleBroker.value)

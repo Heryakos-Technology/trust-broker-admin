@@ -52,7 +52,7 @@ const fetchLoggedInUser = async () => {
       try {
         const token = localStorage.getItem("token"); 
 
-        const response = await axios.get('/api/users', {
+        const response = await axios.get('https://trust-broker-backend-1.onrender.com/api/users', {
           headers: {
             Authorization: `Bearer ${token}`, 
           },

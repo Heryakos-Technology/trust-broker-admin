@@ -3,9 +3,16 @@ import Hero_Illustration from "/Hero_Illustration.png";
 </script>
 
 <template>
-  <div class="min-h-screen bg-white">
-    <header class="flex py-2 px-4 border-b border-gray-400">
+  <div class="min-h-screen">
+    <header
+      class="flex py-2 px-4 lg:px-10 border-b border-gray-400 justify-between"
+    >
       <span class="font-black text-2xl text-[#2D479B]">Trust Broker </span>
+      <RouterLink
+        :to="{ name: 'Login' }"
+        class="bg-[#2D479B] text-white w-fit px-4 py-1.5 rounded-sm flex justify-center items-center"
+        >Login</RouterLink
+      >
     </header>
     <div
       class="mt-8 px-3 sm:mt-12 md:flex md:mt-16 items-center w-fit gap-x-16 mx-auto"

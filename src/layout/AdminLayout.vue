@@ -220,7 +220,7 @@ onMounted(() => {
           </ul>
           <ul class="ml-8 text-xl mt-8 space-y-8">
             <RouterLink
-              :to="{ name: 'Home' }"
+              :to="{ name: 'CustomerDashboard' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
             >
               <img src="/person.png" alt="" class="size-6" />Customer

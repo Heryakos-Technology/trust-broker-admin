@@ -26,9 +26,12 @@ export const useAuthStore = defineStore("authStore", {
     },
 
     /**************** Login and Register  ***************/
-    async authenticate(apiRoute, formData) {
-      const res = await fetch(`/api/${apiRoute}`, {
+    async login(formData) {
+      const res = await fetch(`https://trust-broker-backend-1.onrender.com/api/users/authenticate`, {
         method: "post",
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(formData),
       });
 
@@ -47,7 +50,7 @@ export const useAuthStore = defineStore("authStore", {
     /**************** Logout  ***************/
 
     async logout() {
-      const res = await fetch("/api/logout", {
+      const res = await fetch("https://trust-broker-backend-1.onrender.com/api/logout", {
         method: "post",
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,

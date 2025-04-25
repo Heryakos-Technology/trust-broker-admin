@@ -1,20 +1,24 @@
 <script setup>
 import { ref } from "vue";
 import Header from "@/components/HomeView/Header.vue";
+import { useAuthStore } from "@/stores/auth";
 
 const formData = ref({
-  phone_number: "",
+  phone: "",
   password: "",
 });
+
+const { login } = useAuthStore();
+
 const showPassword = ref(false);
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
 };
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
-  // Handle login logic here
+  login(formData.value);
   console.log("Login attempted with:", formData.value);
 };
 </script>
@@ -44,7 +48,7 @@ const handleSubmit = (e) => {
             >
             <div class="mt-1 relative">
               <input
-                v-model="formData.phone_number"
+                v-model="formData.phone"
                 id="phone"
                 type="tel"
                 required

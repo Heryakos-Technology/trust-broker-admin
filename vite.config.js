@@ -17,21 +17,23 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-  server: {
-    proxy: {
-      "/api": {
+
+  // server: {
+  //   proxy: {
+  //     "/api": {
         
-        target: "https://trust-broker-backend-1.onrender.com/api/",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
+  //       target: "https://trust-broker-backend-1.onrender.com/api/",
+  //       changeOrigin: true,
+  //       rewrite: (path) => path.replace(/^\/api/, ''),
+  //     },
+
+
       
-    },
-  },
+  //   },
+  // },
    base: process.env.NODE_ENV === 'production'
     ? '/trust-broker-admin/'
     : '/',
 })
 
 
-///

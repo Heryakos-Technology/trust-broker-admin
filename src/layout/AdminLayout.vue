@@ -7,17 +7,13 @@ import RatingIcon from "/images/AdminPage/rating_icon.png";
 import userIcons from "/images/AdminPage/users_icon.png";
 import userIcon from "/images/AdminPage/user_icon.png";
 import CategoriesIcon from "/images/AdminPage/categories_icon.png";
-//import { useAuthStore } from "@/stores/auth";
-// Removed import { logout } from "@/auth";
+import { useAuthStore } from "@/stores/auth";
 
-// const authStore = useAuthStore();
- 
+const authStore = useAuthStore();
+
 const showDropdown = ref(false);
 
 const user_name = localStorage.getItem("user_name");
-
-
- 
 
 const isSidebarOpen = ref(false);
 const sidebar = ref(null);
@@ -30,15 +26,13 @@ const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
 };
 
- 
-// const handleLogout = async () => {
-//   try {
-//     await authStore.logout();
-  
-//   } catch (error) {
-//     console.error("Logout failed:", error);
-//   }
-// };
+const handleLogout = async () => {
+  try {
+    await authStore.logout();
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
+};
 
 watch(isSidebarOpen, (newValue) => {
   if (newValue) {
@@ -144,11 +138,10 @@ onMounted(() => {
         class="md:flex fixed flex-col pt-24 px-4 bg-darkBlue h-screen w-[300px] z-50 top-0 left-0 text-white hidden bg-blue-950"
       >
         <!-- <Logo class="w-[180px] fill-white" /> -->
-         <div class="flex">
-
-           <img src="/blokerlogo.png" alt="" class="w-1/3">
-           <p class="text-lg font-semibold ml-3">TrustBroker Admin</p>
-         </div>
+        <div class="flex">
+          <img src="/blokerlogo.png" alt="" class="w-1/3" />
+          <p class="text-lg font-semibold ml-3">TrustBroker Admin</p>
+        </div>
         <div class="px-8 mt-16">
           <ul class="text-2xl space-y-10">
             <li
@@ -185,7 +178,6 @@ onMounted(() => {
                     d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                   />
                 </svg>
-               
               </div>
               Profile
             </RouterLink>
@@ -207,7 +199,7 @@ onMounted(() => {
                     d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                   />
                 </svg> -->
-                <img src="/Broker.png" alt="">
+                <img src="/Broker.png" alt="" />
               </div>
               Brokers
             </RouterLink>

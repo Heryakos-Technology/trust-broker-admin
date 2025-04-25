@@ -10,17 +10,21 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: HomeView
+      component: HomeView,
+      meta: { welcome: true },
+
     },
     {
       path: '/BrokerDashbord',
       name: 'BrokerDashbord',
       component: BrokerDashbord,
+      meta: { admin: true },
     },
     {
       path: '/CustomerDashboard',
       name: 'CustomerDashboard',
       component: CustomerDashboard,
+      meta: { admin: true }
     },
     {
       path: '/login',
@@ -31,5 +35,35 @@ const router = createRouter({
 
   ],
 })
+
+
+
+router.beforeEach(async (to, from) => {
+  const userInfoString = localStorage.getItem("userInfo");
+
+  const userInfo = JSON.parse(userInfoString);
+
+  const user_role = userInfo?.role;
+  const userId = userInfo?.userId;
+
+  if (user_role === "Admin" && to.meta.welcome) {
+    return { name: "CustomerDashboard" };
+  }
+  if (user_role === "Admin" && to.meta.broker) {
+    return { name: "CustomerDashboard" };
+  }
+  if (user_role === "Admin" && to.meta.guest) {
+    return { name: "CustomerDashboard" };
+  }
+  if (!userId && to.meta.customer) {
+    return { name: "Login" };
+  }
+  if (!userId && to.meta.broker) {
+    return { name: "Login" };
+  }
+
+
+});
+
 
 export default router

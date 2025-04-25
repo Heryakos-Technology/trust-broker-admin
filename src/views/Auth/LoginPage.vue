@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
-import Header from "@/components/HomeView/Header.vue";
 import { useAuthStore } from "@/stores/auth";
+import Header from "@/components/HomeView/Header.vue";
 
 const formData = ref({
   phone: "",

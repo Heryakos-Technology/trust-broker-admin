@@ -63,7 +63,7 @@ const fetchCustomers = async () => {
   try {
     const token = localStorage.getItem("token");
 
-    const response = await axios.get('/api/customers', {
+    const response = await axios.get('https://trust-broker-backend-1.onrender.com/api/customers', {
       headers: {
         Authorization: `Bearer ${token}`, 
       },
@@ -90,7 +90,7 @@ const fetchDelivery = async () => {
   try {
     const token = localStorage.getItem("token");
 
-    const response = await axios.get('/api/delivery', {
+    const response = await axios.get('https://trust-broker-backend-1.onrender.com/api/delivery', {
       headers: {
         Authorization: `Bearer ${token}`, 
       },
@@ -118,7 +118,7 @@ const fetchDeals = async () => {
       return;
     }
 
-    const response = await axios.get('/api/deals', {
+    const response = await axios.get('https://trust-broker-backend-1.onrender.com/api/deals', {
   headers: {
     Authorization: `Bearer ${localStorage.getItem("token")}`,
   },
@@ -145,7 +145,7 @@ const handleDelete = async (customer) => {
 const deleteCustomer = async (customerId) => {
   const token = localStorage.getItem("token"); 
   try {
-    await axios.delete(`/api/customers/${customerId}`, {
+    await axios.delete(`https://trust-broker-backend-1.onrender.com/api/customers/${customerId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

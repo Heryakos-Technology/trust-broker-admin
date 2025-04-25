@@ -80,7 +80,7 @@ const fetchLoggedInUser = async () => {
    try {
      const token = localStorage.getItem("token");
 
-     const response = await axios.get('/api/sales', {
+     const response = await axios.get('https://trust-broker-backend-1.onrender.com/api/sales', {
        headers: {
          Authorization: `Bearer ${token}`, 
        },
@@ -132,7 +132,7 @@ const saveChanges = async () => {
       ...tempUser.value,
       picture: imageUrl,
     };
-    const response = await axios.put(`/api/users/${userId}`, userData, {
+    const response = await axios.put(`https://trust-broker-backend-1.onrender.com/api/users/${userId}`, userData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

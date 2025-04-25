@@ -13,7 +13,7 @@ export const useAuthStore = defineStore("authStore", {
 
     async getUser() {
       if (localStorage.getItem("token")) {
-        const res = await fetch("/api/user", {
+        const res = await fetch("https://trust-broker-backend-1.onrender.com/api/api/user", {
           headers: {
             authorization: `Bearer ${localStorage.getItem("token")}`,
           },

@@ -21,48 +21,33 @@ const uploaded = ref("");
 const previewImage = ref("");
 const deals = ref([]);
 const users = ref([]);
+const totalDeals = ref(0);
 // const sales = ref([]);
 
 
-onMounted(async () => {
-  await fetchCustomers();
-});
-onMounted(async () => {
-  await fetchDeals();
-});
+const totalCustomers = ref(0);
+
 onMounted(async () => {
   await fetchLoggedInUser();
 });
 onMounted(async () => {
   await fetchSales();
 });
-
-
-let totalCustomers = 0; 
-
-const fetchCustomers = async () => {
-  try {
-    const token = localStorage.getItem("token");
-
-    const response = await axios.get('/api/customers', {
-      headers: {
-        Authorization: `Bearer ${token}`, 
-      },
-    });
-
-    customers.value = response.data[0].user; 
-    // tempUser.value = { ...customers.value };
-
-  
-    totalCustomers = response.data.length;
-    console.log("Total number of customers:", totalCustomers);
-
-    localStorage.setItem("customers", JSON.stringify(customers.value));
-    console.log("Fetched customers:", customers.value);
-  } catch (error) {
-    console.error("Error fetching customers:", error);
+ onMounted(()=>{
+  const storedTotalDeals = localStorage.getItem("totalDeals");
+  if(storedTotalDeals){
+    totalDeals.value = parseInt(storedTotalDeals, 10);
   }
-};
+ })
+ onMounted(()=>{
+  const storedTotalCustomers = localStorage.getItem("totalCustomers");
+  if(storedTotalCustomers){
+    totalCustomers.value = parseInt(storedTotalCustomers, 10);
+  }
+ })
+
+
+
 const fetchLoggedInUser = async () => {
       try {
         const token = localStorage.getItem("token"); 
@@ -86,29 +71,10 @@ const fetchLoggedInUser = async () => {
         console.error("Error fetching logged-in user:", error);
       }
     };
-let totalDeals = 0; 
-const fetchDeals = async () => {
-  try {
-    const token = localStorage.getItem("token");
 
-    const response = await axios.get('/api/deals', {
-      headers: {
-        Authorization: `Bearer ${token}`, 
-      },
-    });
 
-    deals.value = response.data; 
 
- 
-    totalDeals = response.data.length; 
-    console.log("Total number of deals:", totalDeals);
 
-    localStorage.setItem("deals", JSON.stringify(deals.value));
-    console.log("Fetched deals:", deals.value);
-  } catch (error) {
-    console.error("Error fetching deals:", error);
-  }
-};
  let totalSales = 0; 
  const fetchSales = async () => {
    try {

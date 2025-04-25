@@ -58,7 +58,7 @@ const showDetails = (customerId) => {
 
   selectedCustomer.value = customers.value.find(customer => customer.customerId === customerId);
 };
-
+let totalCustomers = 0; 
 const fetchCustomers = async () => {
   try {
     const token = localStorage.getItem("token");
@@ -70,6 +70,9 @@ const fetchCustomers = async () => {
     });
 
     customers.value = response.data; 
+    totalCustomers = response.data.length;
+    localStorage.setItem("totalCustomers", totalCustomers);
+    localStorage.setItem("customers", JSON.stringify(customers.value));
 
 
     customers.value.forEach(customer => {
@@ -106,7 +109,7 @@ const fetchDelivery = async () => {
     console.error("Error fetching delivery:", error);
   }
 };
-
+let totalDeals = 0; 
 const fetchDeals = async () => {
   try {
     const token = localStorage.getItem("token");
@@ -121,7 +124,11 @@ const fetchDeals = async () => {
   },
 });
 
-    deals.value = response.data[0]; 
+    deals.value = response.data; 
+    totalDeals = response.data.length; 
+    console.log("Total number of deals:", totalDeals);
+    localStorage.setItem("deals", JSON.stringify(deals.value));
+    localStorage.setItem("totalDeals", totalDeals);
     // tempdeals.value = { ...deals.value };
     console.log("deals",deals.value);
   } catch (error) {
@@ -159,6 +166,7 @@ const confirmDelete = async () => {
 
     } catch (error) {
       console.error("Error deleting customer:", error); 
+      alert("there was an error deleting the customer");
     } finally {
       loading.value.delete = false; 
       isDeleteConfirmOpen.value = false;
@@ -236,7 +244,11 @@ const closeDeleteConfirm = () => {
     <div v-if="selectedCustomer" class="ml-40 mb-5">
   <p class="text-[22px]">Customer</p>
   <div class="w-96 h-[450px] pt-32 p-5 bg-[#57B4D3] shadow-2xl rounded-md font-semibold text-stone-200">
-    <img :src="selectedCustomer.user.picture" alt="Customer Picture" class="-mt-26">
+    <img 
+  :src="selectedCustomer.user.picture ? selectedCustomer.user.picture : 'path/to/placeholder.jpg'" 
+  alt="Customer Picture" 
+  class="-mt-26"
+/>
     <div class="flex">
       <p class="w-56">{{ selectedCustomer.user.fullName }}</p>
       <p>{{ selectedCustomer.user.sex }}</p>
@@ -275,55 +287,55 @@ const closeDeleteConfirm = () => {
 
     <!-- Customer Table Section -->
     <div class="overflow-x-auto w-[1000px] xl:col-span-2 px-4 pb-40">
-  <div class="">
-    <div class="min-w-[600px] max-w-[100%] rounded-lg shadow-md">
-      <!-- Table Header -->
-      <div class="grid grid-cols-7 bg-white uppercase font-bold">
-        <div class="p-3 lg:py-5   text-sm text-black  left-0 bg-white z-10">No</div>
-        <div class="p-3 lg:py-5 text-sm  text-black -ml-16 left-0 bg-white z-10">Customer</div>
-        <div class="p-3 lg:py-5 text-sm  text-black -ml-16  left-0 bg-white z-10">Email</div>
-        <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Phone</div>
-        <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Delivery option</div>
-        <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Deal Status</div>
-        <div class="p-3 lg:py-5 text-sm text-black  left-0 bg-white z-10">Action</div>
-      </div>
+      <div class="sticky">
+  <div class="min-w-[600px] max-w-[100%] rounded-lg shadow-md">
+    <!-- Table Header -->
+    <div class="grid grid-cols-7 bg-white uppercase font-bold">
+      <div class="p-3 lg:py-5 text-[12px] text-black bg-white z-10">No</div>
+      <div class="p-3 lg:py-5 text-[12px] text-black -ml-16 bg-white z-10">Customer</div>
+      <div class="p-3 lg:py-5 text-[12px] text-black bg-white -ml-14 z-10 w-48">Email</div> <!-- Adjusted width -->
+      <div class="p-3 lg:py-5 text-[12px] text-black bg-white ml-1 z-10">Phone</div>
+      <div class="p-3 lg:py-5 text-[12px] text-black bg-white -ml-1 z-10">Delivery option</div>
+      <div class="p-3 lg:py-5 text-[12px] text-black bg-white z-10">Deal Status</div>
+      <div class="p-3 lg:py-5 text-[12px] text-black ml-8 bg-white z-10">Action</div>
+    </div>
 
-      <!-- Table Body -->
-      <div v-for="(customer, index) in customers" :key="customer.customerId" class="grid grid-cols-7 my-3 bg-white font-semibold lg:py-2 text-[10px]">
-        <div class="p-3  text-[12px] text-black   left-0 bg-white z-10">
-          {{ index + 1 }}
-        </div>
-        <div class="p-3 -ml-16 text-[12px] text-black w-   bg-white z-10">
-          {{ customer.user.fullName }} 
-        </div>
-        <div class="p-3 -ml-16  text-[12px] text-black ">
-          {{ customer.user.email }} 
-        </div>
-        <div class="p-3  text-[12px] text-black ">
-          {{ customer.user.phone }}
-        </div>
-        <div class="p-3 text-[12px] text-black ">
-          {{ customer.deals.length > 0 ? customer.deals[0].deliveryOption : 'N/A' }}
-        </div>
-        <div class="p-3 text-[12px] text-black ">
-          {{ customer.deals.length > 0 ? customer.deals[0].dealsStatus : 'N/A' }} 
-        </div>
-        <div class="p-3 text-[12px] flex gap-x-2  lg:gap-x-4 justify-center -ml-16">
-          <p @click="showDetails(customer.customerId)" class="cursor-pointer text-[#57B4D3]">details</p>
-          <button
-            @click="handleDelete(customer)"
-            class="text-red-500 hover:text-red-700 text-[10px] cursor-pointer transition duration-200"
-            title="Delete"
-            :disabled="loading.add || loading.update || loading.delete"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 lg:size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M4 7h16m-4 4v6m-4-6v6" />
-            </svg>
-          </button>
-        </div>
+    <!-- Table Body -->
+    <div v-for="(customer, index) in customers" :key="customer.customerId" class="grid grid-cols-7 my-3 bg-white font-semibold lg:py-2 text-[10px]">
+      <div class="p-3 text-[12px] text-black bg-white z-10">
+        {{ index + 1 }}
+      </div>
+      <div class="p-3 text-[12px] text-black -ml-16 bg-white z-10">
+        {{ customer.user.fullName }} 
+      </div>
+      <div class="p-3 text-[12px] text-black -ml-14 bg-white z-10 w-48">
+        {{ customer.user.email }} 
+      </div> <!-- Adjusted width -->
+      <div class="p-3 text-[12px] text-black bg-white z-10">
+        {{ customer.user.phone }}
+      </div>
+      <div class="p-3 text-[12px] text-black bg-white z-10">
+        {{ customer.deals.length > 0 ? customer.deals[0].deliveryOption : 'N/A' }}
+      </div>
+      <div class="p-3 text-[12px] text-black bg-white z-10">
+        {{ customer.deals.length > 0 ? customer.deals[0].dealsStatus : 'N/A' }} 
+      </div>
+      <div class="p-3 text-[12px] flex gap-x-2 lg:gap-x-4 justify-center bg-white z-10">
+        <p @click="showDetails(customer.customerId)" class="cursor-pointer text-[#57B4D3]">details</p>
+        <button
+          @click="handleDelete(customer)"
+          class="text-red-500 hover:text-red-700 text-[10px] cursor-pointer transition duration-200"
+          title="Delete"
+          :disabled="loading.add || loading.update || loading.delete"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="size-5 lg:size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M4 7h16m-4 4v6m-4-6v6" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
+</div>
 </div>
     </div>
   </div>

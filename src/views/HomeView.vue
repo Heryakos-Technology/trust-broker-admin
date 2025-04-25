@@ -43,12 +43,4 @@ import Header from "@/components/HomeView/Header.vue";
   </div>
 </template>
 
-<script>
-export default {
-
-}
-</script>
-
-<style>
-
-</style>
+<style></style>

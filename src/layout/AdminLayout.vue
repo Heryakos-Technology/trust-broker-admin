@@ -12,6 +12,7 @@ import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
 
 const showDropdown = ref(false);
+const userInfo = ref([]);
 
 const user_name = localStorage.getItem("user_name");
 
@@ -54,6 +55,11 @@ onMounted(() => {
     );
   }
 });
+const userInformation = localStorage.getItem('userInfo');
+  if (userInformation) {
+    userInfo.value = JSON.parse(userInformation);
+    console.log("thinggggggg",userInfo.value)
+  }
 </script>
 
 <template>
@@ -75,7 +81,7 @@ onMounted(() => {
           ></path>
         </svg>
         <div class="flex gap-x-4 items-center relative">
-          <p class="font-semibold">Welcome, {{ user_name }}</p>
+          <p class="font-semibold">Welcome, {{ userInfo.fullName }}</p>
           <div
             class="flex gap-x-1 items-end cursor-pointer hover:font-bold transition-all ease-linear duration-200"
             @click="toggleDropdown"

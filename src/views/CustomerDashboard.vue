@@ -52,14 +52,14 @@ const fetchLoggedInUser = async () => {
       try {
         const token = localStorage.getItem("token"); 
 
-        const response = await axios.get('https://trust-broker-backend-1.onrender.com/api/users', {
+        const response = await axios.get('https://trust-broker-backend-1.onrender.com/api/users/me', {
           headers: {
             Authorization: `Bearer ${token}`, 
           },
         });
 
         if (response.data) {
-          users.value = response.data[6]; 
+          users.value = response.data; 
           localStorage.setItem('user_id', response.data[0].userId)
           localStorage.setItem('userInformation', users.value);
           console.log('imageeeeeeeeeeeee', response.data[0].picture)
@@ -86,7 +86,7 @@ const fetchLoggedInUser = async () => {
        },
      });
 
-     sales.value = response.data[0].user; 
+     sales.value = response.data; 
 
       
      totalSales = response.data.length; 
@@ -299,7 +299,7 @@ const clearImageUpload = () => {
               <p class="text-center pt-2">Total sales</p>
               <div class="flex w-20 mt-6 mx-auto">
                 <img src="/salesIcon.png" alt="" class="mr-4 -mt-2">
-                <p>500</p>
+                <p>{{ totalSales }}</p>
               </div>
             </div>
           </div>

@@ -61,6 +61,9 @@ router.beforeEach(async (to, from) => {
   if (!userId && to.meta.broker) {
     return { name: "Login" };
   }
+  if (!userId && to.meta.admin) {
+    return { name: "Login" };
+  }
 
 
 });

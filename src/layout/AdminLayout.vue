@@ -15,6 +15,9 @@ const showDropdown = ref(false);
 const userInfo = ref([]);
 
 const user_name = localStorage.getItem("user_name");
+const userInfoString = localStorage.getItem("userInfo");
+
+const userInfo = JSON.parse(userInfoString);
 
 const isSidebarOpen = ref(false);
 const sidebar = ref(null);

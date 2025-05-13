@@ -14,6 +14,9 @@ const authStore = useAuthStore();
 const showDropdown = ref(false);
 
 const user_name = localStorage.getItem("user_name");
+const userInfoString = localStorage.getItem("userInfo");
+
+const userInfo = JSON.parse(userInfoString);
 
 const isSidebarOpen = ref(false);
 const sidebar = ref(null);
@@ -75,7 +78,7 @@ onMounted(() => {
           ></path>
         </svg>
         <div class="flex gap-x-4 items-center relative">
-          <p class="font-semibold">Welcome, {{ user_name }}</p>
+          <p class="font-semibold">Welcome, {{ userInfo.fullName }}</p>
           <div
             class="flex gap-x-1 items-end cursor-pointer hover:font-bold transition-all ease-linear duration-200"
             @click="toggleDropdown"

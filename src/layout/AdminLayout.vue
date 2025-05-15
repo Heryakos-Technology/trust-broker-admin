@@ -12,7 +12,6 @@ import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
 
 const showDropdown = ref(false);
-const userInfo = ref([]);
 
 const user_name = localStorage.getItem("user_name");
 const userInfoString = localStorage.getItem("userInfo");
@@ -58,11 +57,11 @@ onMounted(() => {
     );
   }
 });
-const userInformation = localStorage.getItem('userInfo');
-  if (userInformation) {
-    userInfo.value = JSON.parse(userInformation);
-    console.log("thinggggggg",userInfo.value)
-  }
+const userInformation = localStorage.getItem("userInfo");
+if (userInformation) {
+  userInfo.value = JSON.parse(userInformation);
+  console.log("thinggggggg", userInfo.value);
+}
 </script>
 
 <template>

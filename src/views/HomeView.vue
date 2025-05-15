@@ -26,12 +26,12 @@ import Header from "@/components/HomeView/Header.vue";
           with clarity and confidence.
         </p>
 
-        <!-- <RouterLink
+        <RouterLink
           :to="{ name: 'CustomerDashboard' }"
           class="w-fit py-3 px-2 bg-[#2D479B] rounded-md shadow-sm hover:bg-blue-800 text-white"
         >
           Explore Dashboard
-        </RouterLink> -->
+        </RouterLink>
       </div>
 
       <img

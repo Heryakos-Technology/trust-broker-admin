@@ -291,97 +291,103 @@ const clearImageUpload = () => {
 
     <!-- Modal -->
     <div
-      v-if="isModalOpen"
-      class="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center"
-      @click.self="closeModal"
-    >
-      <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
+  v-if="isModalOpen"
+  class="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center"
+  @click.self="closeModal"
+>
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl">
+    <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
 
-        <div class="mb-4">
-          <label for="fullName" class="block text-gray-700 text-sm font-bold mb-2">full name:</label>
-          <input
-            type="text"
-            id="fullName"
-            v-model="tempUser.fullName"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+    <!-- Two-column input fields -->
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-1/2 px-2 mb-4">
+        <label for="fullName" class="block text-gray-700 text-sm font-bold mb-2">Full Name:</label>
+        <input
+          type="text"
+          id="fullName"
+          v-model="tempUser.fullName"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
 
-        <div class="mb-4">
-          <label for="phone" class="block text-gray-700 text-sm font-bold mb-2">Phone Number:</label>
-          <input
-            type="text"
-            id="phone"
-            v-model="tempUser.phone"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+      <div class="w-1/2 px-2 mb-4">
+        <label for="phone" class="block text-gray-700 text-sm font-bold mb-2">Phone Number:</label>
+        <input
+          type="text"
+          id="phone"
+          v-model="tempUser.phone"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
 
-        <div class="mb-4">
-          <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
-          <input
-            type="text"
-            id="city"
-            v-model="tempUser.city"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+      <div class="w-1/2 px-2 mb-4">
+        <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
+        <input
+          type="text"
+          id="city"
+          v-model="tempUser.city"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
 
-        <div class="mb-4">
-          <label for="subcity" class="block text-gray-700 text-sm font-bold mb-2">Subcity:</label>
-          <input
-            type="text"
-            id="subcity"
-            v-model="tempUser.subcity"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div class="mb-4">
-          <label for="kebele" class="block text-gray-700 text-sm font-bold mb-2">kebele:</label>
-          <input
-            type="text"
-            id="kebele"
-            v-model="tempUser.kebele"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+      <div class="w-1/2 px-2 mb-4">
+        <label for="subcity" class="block text-gray-700 text-sm font-bold mb-2">Subcity:</label>
+        <input
+          type="text"
+          id="subcity"
+          v-model="tempUser.subcity"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
 
-        <!-- Image Upload -->
-        <div class="mb-2">
-          <label for="image" class="block text-gray-700 text-sm font-bold mb-1">
-            Profile Picture
-          </label>
-          <img :src="tempUser.picture" alt="Profile Picture" class="w-20 h-20 rounded-full mb-2">
-          <div class="relative w-52 h-36 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:bg-gray-100">
-            <input type="file" id="image" class="absolute w-full h-full top-0 left-0 opacity-0 cursor-pointer" @change="onFileSelected" accept="image/*" />
-            <img v-if="previewImage" :src="previewImage" alt="Preview" class="max-w-full max-h-full object-cover" />
-            <div v-else class="text-gray-700 text-sm text-center p-2">
-              Click or drag image here to upload
-            </div>
-          </div>
-          <p v-if="uploaded" class="mt-2 text-green-500">{{ uploaded }}</p>
-        </div>
-
-        <div class="flex justify-end">
-          <button
-            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
-            type="button"
-            @click="closeModal"
-          >
-            Cancel
-          </button>
-          <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="button"
-            @click="saveChanges"
-            :disabled="loading"
-          >
-            <span v-if="loading">Saving...</span>
-            <span v-else>Save</span>
-          </button>
-        </div>
+      <div class="w-1/2 px-2 mb-4">
+        <label for="kebele" class="block text-gray-700 text-sm font-bold mb-2">Kebele:</label>
+        <input
+          type="text"
+          id="kebele"
+          v-model="tempUser.kebele"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
       </div>
     </div>
+
+    <!-- Image Upload -->
+    <div class="mb-4">
+      <label for="image" class="block text-gray-700 text-sm font-bold mb-1">
+        Profile Picture
+      </label>
+      <img :src="tempUser.picture" alt="Profile Picture" class="w-20 h-20 rounded-full mb-2">
+      <div class="relative w-52 h-36 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:bg-gray-100">
+        <input type="file" id="image" class="absolute w-full h-full top-0 left-0 opacity-0 cursor-pointer" @change="onFileSelected" accept="image/*" />
+        <img v-if="previewImage" :src="previewImage" alt="Preview" class="max-w-full max-h-full object-cover" />
+        <div v-else class="text-gray-700 text-sm text-center p-2">
+          Click or drag image here to upload
+        </div>
+      </div>
+      <p v-if="uploaded" class="mt-2 text-green-500">{{ uploaded }}</p>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-end">
+      <button
+        class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+        type="button"
+        @click="closeModal"
+      >
+        Cancel
+      </button>
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        type="button"
+        @click="saveChanges"
+        :disabled="loading"
+      >
+        <span v-if="loading">Saving...</span>
+        <span v-else>Save</span>
+      </button>
+    </div>
+  </div>
+</div>
+
   </AdminLayout>
 </template>

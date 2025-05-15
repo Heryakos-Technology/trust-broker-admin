@@ -152,7 +152,8 @@ if (userInformation) {
         </div>
         <div class="px-8 mt-16">
           <ul class="text-2xl space-y-10">
-            <li
+            <router-link 
+            :to="{ name: 'Home' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 items-center gap-2"
             >
               <div class="bg-lightBlue p-2 rounded-lg">
@@ -167,9 +168,9 @@ if (userInformation) {
                 </svg>
               </div>
               Menu
-            </li>
-            <RouterLink
-              :to="{ name: 'BrokerDashbord' }"
+            </router-link>
+            <!-- <RouterLink
+              :to="{ name: 'Home' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
             >
               <div class="bg-lightBlue p-1 rounded-full">
@@ -188,7 +189,7 @@ if (userInformation) {
                 </svg>
               </div>
               Profile
-            </RouterLink>
+            </RouterLink> -->
             <RouterLink
               :to="{ name: 'BrokerDashbord' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
@@ -211,26 +212,26 @@ if (userInformation) {
               </div>
               Brokers
             </RouterLink>
-            <li
+            <!-- <li
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
             >
               <img :src="DashboardIcon" alt="" class="size-6" />
               Dashboard
-            </li>
+            </li> -->
           </ul>
-          <ul class="ml-8 text-xl mt-8 space-y-8">
+          <ul class=" text-xl mt-8 space-y-8">
             <RouterLink
               :to="{ name: 'CustomerDashboard' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
             >
-              <img src="/person.png" alt="" class="size-6" />Customer
+              <img src="/person.png" alt="" class="size-8 mr-1" />Customer
             </RouterLink>
-            <RouterLink
+            <!-- <RouterLink
               :to="{ name: 'Home' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"
             >
               <img :src="userIcons" alt="" class="size-6" />Users
-            </RouterLink>
+            </RouterLink> -->
             <!-- <RouterLink
               :to="{ name: 'Home' }"
               class="flex cursor-pointer hover:font-bold transition-all ease-linear duration-200 gap-x-2 items-center"

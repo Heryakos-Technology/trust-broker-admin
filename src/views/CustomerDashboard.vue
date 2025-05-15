@@ -1,114 +1,83 @@
 <script setup>
 import AdminLayout from "@/layout/AdminLayout.vue";
-import admin_user_profile from "/images/AdminPage/admin_user_profile.png";
-import admin_profile_setting from "/images/AdminPage/admin_profile_setting.png";
 import AdminTable from "@/components/Admin/AdminTable.vue";
 import { onMounted, ref } from "vue";
 import axios from "axios";
 
-const customers = ref(null);
 const isModalOpen = ref(false);
 const imageFile = ref(null);
-const loading = ref(false);
-const tempUser = ref(null);
-// const sales = ref(null);
-
-// Cloudinary configuration
-const uploadPreset = "my_unsigned_preset"; 
-const cloudName = "dwh8v2zhg";  
 const file = ref(null);
 const uploaded = ref("");
 const previewImage = ref("");
-const deals = ref([]);
-const users = ref([]);
+const loading = ref(false);
+const tempUser = ref(null);
+
+const users = ref({});
 const totalDeals = ref(0);
-// const sales = ref([]);
-
-
 const totalCustomers = ref(0);
+const sales = ref([]);
+let totalSales = 0;
+
+const uploadPreset = "my_unsigned_preset";
+const cloudName = "dwh8v2zhg";
 
 onMounted(async () => {
   await fetchLoggedInUser();
-});
-onMounted(async () => {
   await fetchSales();
-});
- onMounted(()=>{
+
   const storedTotalDeals = localStorage.getItem("totalDeals");
-  if(storedTotalDeals){
-    totalDeals.value = parseInt(storedTotalDeals, 10);
-  }
- })
- onMounted(()=>{
+  if (storedTotalDeals) totalDeals.value = parseInt(storedTotalDeals, 10);
+
   const storedTotalCustomers = localStorage.getItem("totalCustomers");
-  if(storedTotalCustomers){
-    totalCustomers.value = parseInt(storedTotalCustomers, 10);
-  }
- })
-
-
+  if (storedTotalCustomers) totalCustomers.value = parseInt(storedTotalCustomers, 10);
+});
 
 const fetchLoggedInUser = async () => {
-      try {
-        const token = localStorage.getItem("token"); 
+  try {
+    const token = localStorage.getItem("token");
 
-        const response = await axios.get('https://trust-broker-backend-1.onrender.com/api/users/me', {
-          headers: {
-            Authorization: `Bearer ${token}`, 
-          },
-        });
+    const response = await axios.get("https://trust-broker-backend-1.onrender.com/api/users/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-        if (response.data) {
-          users.value = response.data; 
-          localStorage.setItem('user_id', response.data[0].userId)
-          localStorage.setItem('userInformation', users.value);
-          console.log('imageeeeeeeeeeeee', response.data[0].picture)
-          
-          console.log('response', response)
-          tempUser.value = { ...users.value };
-        }
-      } catch (error) {
-        console.error("Error fetching logged-in user:", error);
-      }
-    };
+    if (response.data) {
+      users.value = response.data;
+      localStorage.setItem("user_id", response.data.userId);
+      tempUser.value = { ...response.data };
+    }
+  } catch (error) {
+    console.error("Error fetching logged-in user:", error);
+  }
+};
 
+const fetchSales = async () => {
+  try {
+    const token = localStorage.getItem("token");
 
+    const response = await axios.get("https://trust-broker-backend-1.onrender.com/api/sales", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-
- let totalSales = 0; 
- const fetchSales = async () => {
-   try {
-     const token = localStorage.getItem("token");
-
-     const response = await axios.get('https://trust-broker-backend-1.onrender.com/api/sales', {
-       headers: {
-         Authorization: `Bearer ${token}`, 
-       },
-     });
-
-     sales.value = response.data; 
-
-      
-     totalSales = response.data.length; 
-     console.log("Total number of sales:", totalSales);
-
-     localStorage.setItem("sales", JSON.stringify(sales.value));
-     console.log("Fetched sales:", sales.value);
-   } catch (error) {
-     console.error("Error fetching sales:", error);
-   }
- };
-
-
+    sales.value = response.data;
+    totalSales = sales.value.length;
+    localStorage.setItem("sales", JSON.stringify(sales.value));
+  } catch (error) {
+    console.error("Error fetching sales:", error);
+  }
+};
 
 const openModal = () => {
   isModalOpen.value = true;
-  tempUser.value = { ...users.value };
+  tempUser.value = { ...users.value }; // Clone current user data for editing
 };
 
 const closeModal = () => {
   isModalOpen.value = false;
-  tempUser.value = { ...users.value };
+  tempUser.value = { ...users.value }; // Reset edits
   clearImageUpload();
 };
 
@@ -132,21 +101,25 @@ const saveChanges = async () => {
       ...tempUser.value,
       picture: imageUrl,
     };
-    const response = await axios.put(`https://trust-broker-backend-1.onrender.com/api/users/${userId}`, userData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    users.value =response.data[0];
-    console.log("User Information updated:", response.data);
+
+    const response = await axios.put(
+      `https://trust-broker-backend-1.onrender.com/api/users/${userId}`,
+      userData,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    users.value = response.data;
     updateUser(response.data);
     closeModal();
-    
-    $toast.success("Profile updated successfully!", { position: 'top' });
+
+    $toast.success("Profile updated successfully!", { position: "top" });
   } catch (error) {
-    console.error("Error updating user information:", error.response || error.message);
-    
-    $toast.error("Failed to update profile.", { position: 'top' });
+    console.error("Error updating user information:", error);
+    $toast.error("Failed to update profile.", { position: "top" });
   } finally {
     loading.value = false;
   }
@@ -154,10 +127,14 @@ const saveChanges = async () => {
 
 const uploadImageToCloudinary = async (file) => {
   const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', uploadPreset);
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
 
-  const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData);
+  const response = await axios.post(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    formData
+  );
+
   return response.data;
 };
 
@@ -172,7 +149,7 @@ const onFileSelected = (event) => {
 };
 
 const uploadFile = async () => {
-  uploaded.value = "Uploading Wait a Sec...";
+  uploaded.value = "Uploading, wait a sec...";
   if (!file.value) return;
 
   const formData = new FormData();
@@ -184,12 +161,12 @@ const uploadFile = async () => {
       `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
       formData
     );
-    uploaded.value = "Photo Uploaded Successfully";
+    uploaded.value = "Photo uploaded successfully";
     tempUser.value.picture = response.data.secure_url;
     imageFile.value = file.value;
   } catch (error) {
     uploaded.value = "Failed to upload photo";
-    console.error("Error uploading file:", error.response.data);
+    console.error("Error uploading file:", error.response?.data || error);
   }
 };
 
@@ -200,6 +177,7 @@ const clearImageUpload = () => {
   imageFile.value = null;
 };
 </script>
+
 <template>
   <AdminLayout>
     <div>
@@ -313,97 +291,103 @@ const clearImageUpload = () => {
 
     <!-- Modal -->
     <div
-      v-if="isModalOpen"
-      class="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center"
-      @click.self="closeModal"
-    >
-      <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
+  v-if="isModalOpen"
+  class="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center"
+  @click.self="closeModal"
+>
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl">
+    <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
 
-        <div class="mb-4">
-          <label for="fullName" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
-          <input
-            type="text"
-            id="fullName"
-            v-model="tempUser.fullName"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+    <!-- Two-column input fields -->
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-1/2 px-2 mb-4">
+        <label for="fullName" class="block text-gray-700 text-sm font-bold mb-2">Full Name:</label>
+        <input
+          type="text"
+          id="fullName"
+          v-model="tempUser.fullName"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
 
-        <div class="mb-4">
-          <label for="phone" class="block text-gray-700 text-sm font-bold mb-2">Phone Number:</label>
-          <input
-            type="text"
-            id="phone"
-            v-model="tempUser.phone"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+      <div class="w-1/2 px-2 mb-4">
+        <label for="phone" class="block text-gray-700 text-sm font-bold mb-2">Phone Number:</label>
+        <input
+          type="text"
+          id="phone"
+          v-model="tempUser.phone"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
 
-        <div class="mb-4">
-          <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
-          <input
-            type="text"
-            id="city"
-            v-model="tempUser.city"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+      <div class="w-1/2 px-2 mb-4">
+        <label for="city" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
+        <input
+          type="text"
+          id="city"
+          v-model="tempUser.city"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
 
-        <div class="mb-4">
-          <label for="subcity" class="block text-gray-700 text-sm font-bold mb-2">Subcity:</label>
-          <input
-            type="text"
-            id="subcity"
-            v-model="tempUser.subcity"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div class="mb-4">
-          <label for="kebele" class="block text-gray-700 text-sm font-bold mb-2">kebele:</label>
-          <input
-            type="text"
-            id="kebele"
-            v-model="tempUser.kebele"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+      <div class="w-1/2 px-2 mb-4">
+        <label for="subcity" class="block text-gray-700 text-sm font-bold mb-2">Subcity:</label>
+        <input
+          type="text"
+          id="subcity"
+          v-model="tempUser.subcity"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
 
-        <!-- Image Upload -->
-        <div class="mb-2">
-          <label for="image" class="block text-gray-700 text-sm font-bold mb-1">
-            Profile Picture
-          </label>
-          <img :src="tempUser.picture" alt="Profile Picture" class="w-20 h-20 rounded-full mb-2">
-          <div class="relative w-52 h-36 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:bg-gray-100">
-            <input type="file" id="image" class="absolute w-full h-full top-0 left-0 opacity-0 cursor-pointer" @change="onFileSelected" accept="image/*" />
-            <img v-if="previewImage" :src="previewImage" alt="Preview" class="max-w-full max-h-full object-cover" />
-            <div v-else class="text-gray-700 text-sm text-center p-2">
-              Click or drag image here to upload
-            </div>
-          </div>
-          <p v-if="uploaded" class="mt-2 text-green-500">{{ uploaded }}</p>
-        </div>
-
-        <div class="flex justify-end">
-          <button
-            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
-            type="button"
-            @click="closeModal"
-          >
-            Cancel
-          </button>
-          <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="button"
-            @click="saveChanges"
-            :disabled="loading"
-          >
-            <span v-if="loading">Saving...</span>
-            <span v-else>Save</span>
-          </button>
-        </div>
+      <div class="w-1/2 px-2 mb-4">
+        <label for="kebele" class="block text-gray-700 text-sm font-bold mb-2">Kebele:</label>
+        <input
+          type="text"
+          id="kebele"
+          v-model="tempUser.kebele"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
       </div>
     </div>
+
+    <!-- Image Upload -->
+    <div class="mb-4">
+      <label for="image" class="block text-gray-700 text-sm font-bold mb-1">
+        Profile Picture
+      </label>
+      <img :src="tempUser.picture" alt="Profile Picture" class="w-20 h-20 rounded-full mb-2">
+      <div class="relative w-52 h-36 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:bg-gray-100">
+        <input type="file" id="image" class="absolute w-full h-full top-0 left-0 opacity-0 cursor-pointer" @change="onFileSelected" accept="image/*" />
+        <img v-if="previewImage" :src="previewImage" alt="Preview" class="max-w-full max-h-full object-cover" />
+        <div v-else class="text-gray-700 text-sm text-center p-2">
+          Click or drag image here to upload
+        </div>
+      </div>
+      <p v-if="uploaded" class="mt-2 text-green-500">{{ uploaded }}</p>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-end">
+      <button
+        class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+        type="button"
+        @click="closeModal"
+      >
+        Cancel
+      </button>
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        type="button"
+        @click="saveChanges"
+        :disabled="loading"
+      >
+        <span v-if="loading">Saving...</span>
+        <span v-else>Save</span>
+      </button>
+    </div>
+  </div>
+</div>
+
   </AdminLayout>
 </template>

@@ -9,6 +9,7 @@ const formData = ref({
 });
 
 const { login } = useAuthStore();
+const loginText = ref(' Sign In')
 
 const showPassword = ref(false);
 
@@ -17,6 +18,7 @@ const togglePassword = () => {
 };
 
 const handleSubmit = async (e) => {
+  loginText.value = 'Signning in...'
   e.preventDefault();
   login(formData.value);
   console.log("Login attempted with:", formData.value);
@@ -136,7 +138,7 @@ const handleSubmit = async (e) => {
             type="submit"
             class="w-full py-3 px-4 bg-[#2D479B] text-white font-semibold rounded-lg hover:bg-blue-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2D479B] transition-all duration-300"
           >
-            Sign In
+         {{ loginText }}
           </button>
         </form>
 

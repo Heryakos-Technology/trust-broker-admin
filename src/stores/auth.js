@@ -41,7 +41,8 @@ export const useAuthStore = defineStore("authStore", {
       } else {
         console.log(this.user);
         this.errors = {};
-        localStorage.setItem("token", data.token);
+        console.log('dataaaaa',data);
+        localStorage.setItem("token",data.token);
         localStorage.setItem("userInfo", JSON.stringify(data.user)); // Store user info
         this.user = data.user;
         router.push({ name: "CustomerDashboard" });

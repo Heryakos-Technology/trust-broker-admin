@@ -241,49 +241,73 @@ const closeDeleteConfirm = () => {
 
     <div class="flex flex-col items-center">
     <!-- Broker Information Section -->
-    <div v-if="selectedCustomer" class="ml-40 mb-5">
+<div v-if="selectedCustomer" class="ml-40 mb-5">
   <p class="text-[22px]">Customer</p>
-  <div class="w-96 h-[450px] pt-32 p-5 bg-[#57B4D3] shadow-2xl rounded-md font-semibold text-stone-200">
-    <img 
-  :src="selectedCustomer.user.picture ? selectedCustomer.user.picture : 'path/to/placeholder.jpg'" 
-  alt="Customer Picture" 
-  class="-mt-26"
-/>
+  <div class="w-96 h-[auto] pt-10 p-5 bg-[#57B4D3] shadow-2xl rounded-md font-semibold text-stone-200">
+  
+    <div class="flex justify-center mb-6">
+      <img
+        v-if="selectedCustomer.user.picture"
+        :src="selectedCustomer.user.picture"
+        alt="Profile"
+        class="w-24 h-24 rounded-full object-cover border-2 border-white"
+      />
+      <div v-else class="w-24 h-24 rounded-full bg-white text-center text-black flex items-center justify-center">
+        No Image
+      </div>
+    </div>
+
+
     <div class="flex">
       <p class="w-56">{{ selectedCustomer.user.fullName }}</p>
       <p>{{ selectedCustomer.user.sex }}</p>
     </div>
-    <hr class="mt-2">
+    
+    <hr class="mt-2" />
+
     <div class="flex mt-4 space-x-4">
       <p class="w-56">Email</p>
       <p>{{ selectedCustomer.user.email }}</p>
     </div>
+
     <div class="flex mt-4 space-x-4">
       <p class="w-56">Phone</p>
       <p>{{ selectedCustomer.user.phone }}</p>
     </div>
+
     <div class="flex mt-4 space-x-4">
       <p class="w-56">City</p>
       <p>{{ selectedCustomer.user.city }}</p>
     </div>
+
     <div class="flex mt-4 space-x-4">
       <p class="w-56">Subcity</p>
       <p>{{ selectedCustomer.user.subcity }}</p>
     </div>
+
     <div class="flex mt-4 space-x-4">
       <p class="w-56">Kebele</p>
       <p>{{ selectedCustomer.user.kebele }}</p>
     </div>
+
     <div class="flex mt-4 space-x-4">
       <p class="w-56">Identification Card</p>
-      <img :src="selectedCustomer.user.identificationCard" alt="ID Card" class="w-20 h-auto">
+      <img
+        v-if="selectedCustomer.user.identificationCard"
+        :src="selectedCustomer.user.identificationCard"
+        alt="ID Card"
+        class="w-20 h-auto"
+      />
+      <p v-else class="text-[14px]">No ID Uploaded</p>
     </div>
+
     <div class="flex mt-4 space-x-4">
       <p class="w-56">Buys Quantity</p>
       <p>{{ selectedCustomer.buys.length > 0 ? selectedCustomer.buys[0].quantity : 'N/A' }}</p>
     </div>
   </div>
 </div>
+
 
     <!-- Customer Table Section -->
     <div class="overflow-x-auto w-[1000px] xl:col-span-2 px-4 pb-40">

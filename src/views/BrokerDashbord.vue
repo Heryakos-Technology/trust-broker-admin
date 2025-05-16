@@ -136,7 +136,10 @@
 <div class="flex w-20/20">
   <div class="popup-content">
           <h1 class="mb-3 text-xl font-semibold">Deal</h1>
+
 <div class="bg-white w-11/10  px-3 py-5 mb-3 shadow-sm">
+
+
 <div class="flex justify-between">
   <div class="flex jus">
     <img src="/person.png" alt="">
@@ -181,7 +184,9 @@
 </div>
 </div>
   </div>
+
   <div><button @click="showDeal = false" class="mt-18 bg-red-500 rounded-full w-10 h-10  text-white  p-2 ml-5"><i class="fa-solid fa-xmark"></i></button>
+
 </div>
 </div>
         </div>
